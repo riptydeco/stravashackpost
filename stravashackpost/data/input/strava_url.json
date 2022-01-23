@@ -1,0 +1,9 @@
+{
+    "athlete": "https://www.strava.com/api/v3/athlete",
+    "oauth": "https://www.strava.com/oauth/token",
+    "activities": "https://www.strava.com/api/v3/athlete/activities",
+    "activity_detail": "https://www.strava.com/api/v3/activities/",
+    "athlete_summary": "https://www.strava.com/api/v3/athletes/4119437/stats",
+    "clubs": "https://www.strava.com/api/v3/athlete/clubs",
+    "gear": "https://www.strava.com/api/v3/gear/"
+}

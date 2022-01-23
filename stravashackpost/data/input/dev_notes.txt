@@ -1,0 +1,15 @@
+s[Dev Notes:
+
+Shit that works:
+- Managing access token refreshes with Strava's oath system
+- Pulling summary data from /athletes/{id}/stats
+- Pulling activity data from /athlete/activities
+- General activity summarization
+
+Stuff that doesn't work:
+- Garmin only allows API access for enterprise developers.  Dick move.  Total weight for weightlifting had to be calculated manually
+- Garmin package for Python exists, but doesn't seem to actually work
+
+Stuff I haven't figured out yet:
+- Calories are in /activities/{id} and can only be accessed one activity at a time.  I'll have to build a loop to make an individual call for each activity.
+]s
