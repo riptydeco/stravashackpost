@@ -39,7 +39,7 @@ def jsonWriter(file_type, output):
         print('Writing to... ', output_file)
 
     with open(output_file, 'w') as outfile:
-        json.dump(output, outfile)
+        json.dump(output, outfile, indent=5)
 
 def textWriter(file_type, output):
     with open(file_name) as f:

@@ -5,5 +5,8 @@
     "strava_url": "/data/input/strava_url.json",
     "strava_distance": "/data/input/strava_distance.json",
     "shack_post": "/data/output/shackpost/shack_file",
-    "dev_notes": "/data/input/dev_notes.txt"
+    "dev_notes": "/data/input/dev_notes.txt",
+    "activity_list": "/data/output/rawdata/activity_list.json",
+    "athlete_data": "/data/output/rawdata/athlete_data.json",
+    "athlete_summary": "/data/output/rawdata/athlete_summary.json"
 }

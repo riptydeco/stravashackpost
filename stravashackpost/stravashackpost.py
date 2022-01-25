@@ -32,24 +32,26 @@ ride_types = {'Ride' : 'rode a bike',
            'WeightTraining' : 'lifted weights'}
 
 def format_weekly_activities(activity, dftw, hours, minutes):
-    switcher = {
-        'Run': '\n Running:  ' + '%d:%02d' % (hours, minutes) + ' | Total distance: ' + str(round(dftw[dftw['Activity']=='Run']['distance'].sum()/2200,1)) + ' mi',
-        'Ride': '\n Cycling:  ' + '%d:%02d' % (hours, minutes) + ' | Total distance: ' + str(round(dftw[dftw['Activity']=='Ride']['distance'].sum()/2200,1)) + ' mi. Avg power: '
-            + str(round((dftw[dftw['Activity']=='Ride']['kilojoules'].sum() * 1000) / dftw[dftw['Activity']=='Ride']['moving_time'].sum())) + ' W',
-        'WeightTraining': '\n Strength:  ' + '%d:%02d' % (hours, minutes) + ' | Total weight: ' + '[PLACEHOLDER]' + ' lb',
-    }
- 
-    return switcher.get(activity, "nothing")
+    if activity == 'Run':
+        summary_string = '\n Running:  ' + '%d:%02d' % (hours, minutes) + ' | Total distance: ' + str(round(dftw[dftw['Activity']=='Run']['distance'].sum()/2200,1)) + ' mi'
+        return summary_string
+    elif activity == 'Ride':
+        summary_string = '\n Cycling:  ' + '%d:%02d' % (hours, minutes) + ' | Total distance: ' + str(round(dftw[dftw['Activity']=='Ride']['distance'].sum()/2200,1)) + ' mi. Avg power: ' + str(round((dftw[dftw['Activity']=='Ride']['kilojoules'].sum() * 1000) / dftw[dftw['Activity']=='Ride']['moving_time'].sum())) + ' W'
+        return summary_string
+    elif activity == 'WeightTraining':
+        summary_string = '\n Strength:  ' + '%d:%02d' % (hours, minutes) + ' | Total weight: ' + '[PLACEHOLDER]' + ' lb'
+        return summary_string
+    else:
+        return 'Unrecognized activity'
 
-def update_authorization(url, client_info, access_key):
+
+def update_authorization(url, client_info):
     #spinner = yaspin()
 
     #http_proxy = file_reader.jsonLoader('proxy') #only if needed
     oauth_url = file_reader.jsonLoader('strava_url')['oauth']
     client_info = file_reader.jsonLoader('strava_client')
     access_key = file_reader.jsonLoader('strava_token')
-
-    print('\n-- STRAVA API AUTHENTICATION --\n')
     
     current_time = time.time()
 
@@ -64,7 +66,32 @@ def update_authorization(url, client_info, access_key):
         file_reader.jsonWriter('strava_token', res)
         print('new token acquired')
 
-    print('\n-- STRAVA API AUTHENTICATION COMPLETE --\n')
+
+def update_ride_distance(df_temp, athlete_data, activities_detail_url, access_token):
+    # if 'Ride' in activity_types_this_week:
+    ride_update_json = file_reader.jsonLoader('strava_distance')
+    ride_update = pandas.json_normalize(ride_update_json)
+    updated = df_temp.merge(ride_update, how='left', on=['id'], suffixes=('', '_new'))
+    updated['distance'] = numpy.where(pandas.notnull(updated['distance_new']), updated['distance_new'], updated['distance'])
+    updated.drop('distance_new', axis=1, inplace=True)
+    df_temp = updated
+
+    ridedf = df_temp[(df_temp.type == 'Ride')]
+    ridedf['activity_url'] = activities_detail_url + ridedf['id'].astype(str)
+    ride_detail_json = update_distances.get_ride_details(ridedf, activities_detail_url, access_token)
+
+    ## SEEMS TO BE ONLY UPDATING ONE RIDE
+    if len(ride_detail_json) > 0:
+        print(f'Calculating distances for {len(ride_detail_json)} rides.')
+        ridedf_updated = update_distances.calc_ride_distance(ride_detail_json, ridedf, athlete_data)
+
+        ride_out = ridedf_updated[['id', 'distance']]
+        ride_detail = []
+
+        for index, row in list(ride_out.iterrows()):
+            ride_detail.append(dict(row))
+
+        file_reader.jsonWriter('strava_distance', ride_detail)
 
 def clear():
     _ = os.system('clear')
@@ -94,10 +121,7 @@ def main():
     shack_post += 's[Witness the Fitness]s\n\n'
     shack_post += 'It\'s Sunday, so let\'s talk about making wheeled contraptions go faster, and other fitness things.\n\n'
 
-
-    print('\n\n----------------')
-    print('STARTING NEW RUN AT...', datetime.datetime.now())
-    print('----------------\n')
+    print('Starting new run at ', datetime.datetime.now())
 
     #strava_authorization.update_authorization() #Validate and update Strava credentials
 
@@ -106,17 +130,19 @@ def main():
     activities_url = file_reader.jsonLoader('strava_url')['activities']
     activities_detail_url = file_reader.jsonLoader('strava_url')['activity_detail']
     client_info = file_reader.jsonLoader('strava_client')
-    key_info = file_reader.jsonLoader('strava_token')
-    access_token = file_reader.jsonLoader('strava_token')['access_token']
 
     update_authorization(url_list['oauth'], client_info)
 
-    print('Activities API is ', activities_url)
+    key_info = file_reader.jsonLoader('strava_token')
+    #access_token = file_reader.jsonLoader('strava_token')['access_token']
+    access_token = key_info['access_token']
 
-    print('\n-- STRAVA ATHLETE DATA RETRIEVAL --\n')
+    #print('Activities API is ', activities_url)
 
     #athlete_data = strava_athlete.getAthlete()
     athlete_data = strava_api.get_logged_in_athlete(url_list['athlete'], access_token)
+    file_reader.jsonWriter('athlete_data', athlete_data)
+
 
     # Retrieve athlete data, and calculate power-to-weight ratio (Watts/kg)
     athlete_id = athlete_data['id']
@@ -138,17 +164,12 @@ def main():
 
     #df = call_activity_api(activities_url, access_token, first_day_of_year.timestamp()) # Call activities API and pull list of activities
     activity_dataset = strava_api.get_logged_in_athlete_activities(url_list['activities'], access_token, first_day_of_year.timestamp())
+    file_reader.jsonWriter('activity_list', activity_dataset)
     df = pandas.json_normalize(activity_dataset)
     #df = pandas.json_normalize(strava_api.get_logged_in_athlete_activities(url_list['activities'], access_token, first_day_of_year.timestamp()))
     print('Number of activities returned: ' + str(len(df)))
 
-    # Update distance info from saved data
-    ride_update_json = file_reader.jsonLoader('strava_distance')
-    ride_update = pandas.json_normalize(ride_update_json)
-    updated = df.merge(ride_update, how='left', on=['id'], suffixes=('', '_new'))
-    updated['distance'] = numpy.where(pandas.notnull(updated['distance_new']), updated['distance_new'], updated['distance'])
-    updated.drop('distance_new', axis=1, inplace=True)
-    df = updated
+    
 
     # Convert start_date to local timezone
     # Strava provides this in start_date_local, but I wanted to learn how to do it
@@ -166,11 +187,25 @@ def main():
     df['elapsed_hhmm'] = pandas.to_datetime(df.elapsed_minutes, unit='m').dt.strftime('%H:%M')
     print('Calculating activity durations... done')
 
+    # get the data here 
     activity_count_this_year = len(pandas.unique(df['localtimedt']))
     #dftw = df[(pandas.to_datetime(df.localtimedt).dt.date >= last_week_date)] # This week's activities
     dftw = df[(pandas.to_datetime(df.localtimedt).dt.date >= first_day_of_week.date())] # This week's activities
     activity_count_this_week = len(pandas.unique(dftw['localtimedt']))
     activity_types_this_week = pandas.unique(dftw['type'])
+
+    if 'Ride' in activity_types_this_week:
+        update_ride_distance(df, athlete_data, url_list['activity_detail'], key_info['access_token'])
+
+    # Update distance info from saved data
+    ride_update_json = file_reader.jsonLoader('strava_distance')
+    ride_update = pandas.json_normalize(ride_update_json)
+    updated = df.merge(ride_update, how='left', on=['id'], suffixes=('', '_new'))
+    updated['distance'] = numpy.where(pandas.notnull(updated['distance_new']), updated['distance_new'], updated['distance'])
+    updated.drop('distance_new', axis=1, inplace=True)
+    df = updated
+
+    dftw = df[(pandas.to_datetime(df.localtimedt).dt.date >= first_day_of_week.date())] # This week's activities
 
     shack_post = ''.join([shack_post, f'This week, I was active on {activity_count_this_week} out of 7 days. So far this year I have been active on {activity_count_this_year} out of {datetime.datetime.now().timetuple().tm_yday} days. '])
     shack_post = ''.join([shack_post, f'Here\'s what I did this week:\n\n'])
@@ -198,14 +233,15 @@ def main():
 
     dfsum = dftw.groupby(['Activity'])['elapsed_time'].sum()
 
-    print('dynamic thing')
+    print('Calculating weekly totals by activity...', end='\r')
     ## dont forget the "no runs this week thing"
     for activity in activity_types_this_week:
         minutes = math.trunc((dfsum[activity]/60) % 60)
         hours = math.trunc((dfsum[activity]/3600) % 60)
         #print(activity + ' %d:%02d' % (hours, minutes))
-        print(format_weekly_activities(activity, dftw, hours, minutes))
+        #print(format_weekly_activities(activity, dftw, hours, minutes))
         shack_post = ''.join([shack_post, format_weekly_activities(activity, dftw, hours, minutes)])
+    print('Calculating weekly totals by activity... done')
 
     activity_seconds = 0
     #for activity in pandas.unique(dftw['Activity']):
@@ -231,23 +267,23 @@ def main():
     #def ride_distance
 
     # NEED TO MAKE THIS CONDITIONAL ON IF RIDE TYPE EXISTS
-    if 'Ride' in activity_types_this_week:
-        ridedf = df[(df.type == 'Ride')]
-        ridedf['activity_url'] = activities_detail_url + ridedf['id'].astype(str)
-        ride_detail_json = update_distances.get_ride_details(ridedf, activities_detail_url, access_token)
+    # if 'Ride' in activity_types_this_week:
+    #     ridedf = df[(df.type == 'Ride')]
+    #     ridedf['activity_url'] = activities_detail_url + ridedf['id'].astype(str)
+    #     ride_detail_json = update_distances.get_ride_details(ridedf, activities_detail_url, access_token)
 
-        ## SEEMS TO BE ONLY UPDATING ONE RIDE
-        if len(ride_detail_json) > 0:
-            print(f'Calculating distances for {len(ride_detail_json)} rides.')
-            ridedf_updated = update_distances.calc_ride_distance(ride_detail_json, ridedf, athlete_data)
+    #     ## SEEMS TO BE ONLY UPDATING ONE RIDE
+    #     if len(ride_detail_json) > 0:
+    #         print(f'Calculating distances for {len(ride_detail_json)} rides.')
+    #         ridedf_updated = update_distances.calc_ride_distance(ride_detail_json, ridedf, athlete_data)
 
-            ride_out = ridedf_updated[['id', 'distance']]
-            ride_detail = []
+    #         ride_out = ridedf_updated[['id', 'distance']]
+    #         ride_detail = []
 
-            for index, row in list(ride_out.iterrows()):
-                ride_detail.append(dict(row))
+    #         for index, row in list(ride_out.iterrows()):
+    #             ride_detail.append(dict(row))
 
-            file_reader.jsonWriter('strava_distance', ride_detail)
+    #         file_reader.jsonWriter('strava_distance', ride_detail)
 
 if __name__ == '__main__':
     main()

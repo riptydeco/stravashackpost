@@ -14,6 +14,7 @@ shack_post_buffer = ''
 def athlete_summary(url, access_token):
     # param = {'access_token': access_token}
     my_dataset = strava_api.get_athlete_stats(url, access_token)
+    file_reader.jsonWriter('athlete_summary', my_dataset)
     #df = pandas.json_normalize(my_dataset)
     #df.to_csv('/Users/Craig/Documents/pythonApps/athleteAPI/files/Summary.csv')
 
