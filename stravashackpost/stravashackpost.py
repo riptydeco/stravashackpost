@@ -74,8 +74,6 @@ def main():
     # Variables in use
     today = datetime.datetime.today()
     date_list = date_conversion.get_time_info(datetime.datetime.today())
-    print(date_list)
-
     current_date = datetime.datetime.fromtimestamp(date_list['current_timestamp'])
     first_day_of_week = datetime.datetime.fromtimestamp(date_list['first_day_of_week'])
     last_day_of_week = datetime.datetime.fromtimestamp(date_list['last_day_of_week'])
@@ -111,7 +109,7 @@ def main():
     key_info = file_reader.jsonLoader('strava_token')
     access_token = file_reader.jsonLoader('strava_token')['access_token']
 
-    update_authorization(url_list['oauth'], client_info, key_info)
+    update_authorization(url_list['oauth'], client_info)
 
     print('Activities API is ', activities_url)
 
