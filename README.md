@@ -13,5 +13,14 @@ This will not give the scope required to get activity details and athlete summar
 
 After the final step that gets your initial access token and refresh token using Postman, copy and paste the resulting json into /data/input/personal/strava_access_token.json . From that point forward, the routine will automatically refresh your access token as necessary when you run the script.
 
+You also will need to create /data/input/personal/client_info.json, with the following structure:
+
+{
+    "client_id": "[CLIENT_ID]",
+    "client_secret": "[CLIENT_SECRET]"
+}
+
+Both of these identifiers can be found on your app page at https://www.strava.com/settings/api
+
 
 

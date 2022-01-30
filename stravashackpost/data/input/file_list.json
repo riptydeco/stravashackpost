@@ -1,7 +1,7 @@
 {
     "proxy": "/data/input/network_proxy.json",
     "strava_token": "/data/input/personal/strava_access_token.json",
-    "strava_client": "/data/input/client_info.json",
+    "strava_client": "/data/input/personal/client_info.json",
     "strava_url": "/data/input/strava_url.json",
     "strava_distance": "/data/input/personal/strava_distance.json",
     "shack_post": "/data/output/shackpost/shack_file",
