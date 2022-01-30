@@ -38,6 +38,10 @@ def jsonWriter(file_type, output):
         output_file = dirname + file_list[file_type]
         print('Writing to... ', output_file)
 
+    if file_type == 'activity_detail':
+        activity_id = output['id']
+        output_file += f'{activity_id}.json'
+
     with open(output_file, 'w') as outfile:
         json.dump(output, outfile, indent=5)
 

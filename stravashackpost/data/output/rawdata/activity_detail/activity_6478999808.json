@@ -1,0 +1,414 @@
+{
+     "resource_state": 3,
+     "athlete": {
+          "id": 4119437,
+          "resource_state": 1
+     },
+     "name": "Mount Field -1",
+     "distance": 0.0,
+     "moving_time": 3600,
+     "elapsed_time": 3600,
+     "total_elevation_gain": 0,
+     "type": "Ride",
+     "workout_type": 12,
+     "id": 6478999808,
+     "start_date": "2022-01-05T22:54:13Z",
+     "start_date_local": "2022-01-05T15:54:13Z",
+     "timezone": "(GMT-07:00) America/Denver",
+     "utc_offset": -25200.0,
+     "location_city": null,
+     "location_state": null,
+     "location_country": "United States",
+     "achievement_count": 0,
+     "kudos_count": 0,
+     "comment_count": 0,
+     "athlete_count": 1,
+     "photo_count": 0,
+     "map": {
+          "id": "a6478999808",
+          "polyline": "",
+          "resource_state": 3
+     },
+     "trainer": true,
+     "commute": false,
+     "manual": false,
+     "private": false,
+     "visibility": "everyone",
+     "flagged": false,
+     "gear_id": null,
+     "start_latlng": [],
+     "end_latlng": [],
+     "start_latitude": null,
+     "start_longitude": null,
+     "average_speed": 0.0,
+     "max_speed": 0.0,
+     "average_cadence": 80.2,
+     "average_watts": 172.3,
+     "max_watts": 280,
+     "weighted_average_watts": 182,
+     "kilojoules": 620.4,
+     "device_watts": true,
+     "has_heartrate": true,
+     "average_heartrate": 147.7,
+     "max_heartrate": 168.0,
+     "heartrate_opt_out": false,
+     "display_hide_heartrate_option": true,
+     "upload_id": 6888815305,
+     "upload_id_str": "6888815305",
+     "external_id": "trainerroad-d36c2c45-1349-4e44-be48-effef4e7d893.tcx",
+     "from_accepted_tag": false,
+     "pr_count": 0,
+     "total_photo_count": 1,
+     "has_kudoed": false,
+     "suffer_score": 65.0,
+     "description": null,
+     "calories": 617.0,
+     "perceived_exertion": null,
+     "prefer_perceived_exertion": null,
+     "segment_efforts": [],
+     "laps": [
+          {
+               "id": 21187816941,
+               "resource_state": 2,
+               "name": "Lap 1",
+               "activity": {
+                    "id": 6478999808,
+                    "resource_state": 1
+               },
+               "athlete": {
+                    "id": 4119437,
+                    "resource_state": 1
+               },
+               "elapsed_time": 240,
+               "moving_time": 240,
+               "start_date": "2022-01-05T22:54:13Z",
+               "start_date_local": "2022-01-05T15:54:13Z",
+               "distance": 0.0,
+               "start_index": 0,
+               "end_index": 240,
+               "total_elevation_gain": 0,
+               "average_speed": 0.0,
+               "max_speed": 0.0,
+               "average_cadence": 79.5,
+               "device_watts": true,
+               "average_watts": 113.2,
+               "average_heartrate": 114.3,
+               "max_heartrate": 124.0,
+               "lap_index": 1,
+               "split": 1
+          },
+          {
+               "id": 21187816943,
+               "resource_state": 2,
+               "name": "Lap 2",
+               "activity": {
+                    "id": 6478999808,
+                    "resource_state": 1
+               },
+               "athlete": {
+                    "id": 4119437,
+                    "resource_state": 1
+               },
+               "elapsed_time": 240,
+               "moving_time": 240,
+               "start_date": "2022-01-05T22:58:13Z",
+               "start_date_local": "2022-01-05T15:58:13Z",
+               "distance": 0.0,
+               "start_index": 241,
+               "end_index": 481,
+               "total_elevation_gain": 0,
+               "average_speed": 0.0,
+               "max_speed": 0.0,
+               "average_cadence": 81.6,
+               "device_watts": true,
+               "average_watts": 162.8,
+               "average_heartrate": 131.4,
+               "max_heartrate": 141.0,
+               "lap_index": 2,
+               "split": 2
+          },
+          {
+               "id": 21187816944,
+               "resource_state": 2,
+               "name": "Lap 3",
+               "activity": {
+                    "id": 6478999808,
+                    "resource_state": 1
+               },
+               "athlete": {
+                    "id": 4119437,
+                    "resource_state": 1
+               },
+               "elapsed_time": 180,
+               "moving_time": 180,
+               "start_date": "2022-01-05T23:02:13Z",
+               "start_date_local": "2022-01-05T16:02:13Z",
+               "distance": 0.0,
+               "start_index": 482,
+               "end_index": 662,
+               "total_elevation_gain": 0,
+               "average_speed": 0.0,
+               "max_speed": 0.0,
+               "average_cadence": 82.3,
+               "device_watts": true,
+               "average_watts": 201.1,
+               "average_heartrate": 145.1,
+               "max_heartrate": 151.0,
+               "lap_index": 3,
+               "split": 3
+          },
+          {
+               "id": 21187816945,
+               "resource_state": 2,
+               "name": "Lap 4",
+               "activity": {
+                    "id": 6478999808,
+                    "resource_state": 1
+               },
+               "athlete": {
+                    "id": 4119437,
+                    "resource_state": 1
+               },
+               "elapsed_time": 240,
+               "moving_time": 240,
+               "start_date": "2022-01-05T23:05:13Z",
+               "start_date_local": "2022-01-05T16:05:13Z",
+               "distance": 0.0,
+               "start_index": 663,
+               "end_index": 903,
+               "total_elevation_gain": 0,
+               "average_speed": 0.0,
+               "max_speed": 0.0,
+               "average_cadence": 75.6,
+               "device_watts": true,
+               "average_watts": 118.7,
+               "average_heartrate": 132.9,
+               "max_heartrate": 151.0,
+               "lap_index": 4,
+               "split": 4
+          },
+          {
+               "id": 21187816950,
+               "resource_state": 2,
+               "name": "Lap 5",
+               "activity": {
+                    "id": 6478999808,
+                    "resource_state": 1
+               },
+               "athlete": {
+                    "id": 4119437,
+                    "resource_state": 1
+               },
+               "elapsed_time": 720,
+               "moving_time": 720,
+               "start_date": "2022-01-05T23:09:13Z",
+               "start_date_local": "2022-01-05T16:09:13Z",
+               "distance": 0.0,
+               "start_index": 904,
+               "end_index": 1624,
+               "total_elevation_gain": 0,
+               "average_speed": 0.0,
+               "max_speed": 0.0,
+               "average_cadence": 79.3,
+               "device_watts": true,
+               "average_watts": 200.7,
+               "average_heartrate": 151.3,
+               "max_heartrate": 161.0,
+               "lap_index": 5,
+               "split": 5
+          },
+          {
+               "id": 21187816954,
+               "resource_state": 2,
+               "name": "Lap 6",
+               "activity": {
+                    "id": 6478999808,
+                    "resource_state": 1
+               },
+               "athlete": {
+                    "id": 4119437,
+                    "resource_state": 1
+               },
+               "elapsed_time": 180,
+               "moving_time": 180,
+               "start_date": "2022-01-05T23:21:13Z",
+               "start_date_local": "2022-01-05T16:21:13Z",
+               "distance": 0.0,
+               "start_index": 1625,
+               "end_index": 1805,
+               "total_elevation_gain": 0,
+               "average_speed": 0.0,
+               "max_speed": 0.0,
+               "average_cadence": 75.1,
+               "device_watts": true,
+               "average_watts": 118.2,
+               "average_heartrate": 143.7,
+               "max_heartrate": 158.0,
+               "lap_index": 6,
+               "split": 6
+          },
+          {
+               "id": 21187816958,
+               "resource_state": 2,
+               "name": "Lap 7",
+               "activity": {
+                    "id": 6478999808,
+                    "resource_state": 1
+               },
+               "athlete": {
+                    "id": 4119437,
+                    "resource_state": 1
+               },
+               "elapsed_time": 720,
+               "moving_time": 720,
+               "start_date": "2022-01-05T23:24:13Z",
+               "start_date_local": "2022-01-05T16:24:13Z",
+               "distance": 0.0,
+               "start_index": 1806,
+               "end_index": 2526,
+               "total_elevation_gain": 0,
+               "average_speed": 0.0,
+               "max_speed": 0.0,
+               "average_cadence": 84.3,
+               "device_watts": true,
+               "average_watts": 197.9,
+               "average_heartrate": 155.2,
+               "max_heartrate": 164.0,
+               "lap_index": 7,
+               "split": 7
+          },
+          {
+               "id": 21187816960,
+               "resource_state": 2,
+               "name": "Lap 8",
+               "activity": {
+                    "id": 6478999808,
+                    "resource_state": 1
+               },
+               "athlete": {
+                    "id": 4119437,
+                    "resource_state": 1
+               },
+               "elapsed_time": 180,
+               "moving_time": 180,
+               "start_date": "2022-01-05T23:36:13Z",
+               "start_date_local": "2022-01-05T16:36:13Z",
+               "distance": 0.0,
+               "start_index": 2527,
+               "end_index": 2707,
+               "total_elevation_gain": 0,
+               "average_speed": 0.0,
+               "max_speed": 0.0,
+               "average_cadence": 71.9,
+               "device_watts": true,
+               "average_watts": 111.7,
+               "average_heartrate": 150.6,
+               "max_heartrate": 161.0,
+               "lap_index": 8,
+               "split": 8
+          },
+          {
+               "id": 21187816963,
+               "resource_state": 2,
+               "name": "Lap 9",
+               "activity": {
+                    "id": 6478999808,
+                    "resource_state": 1
+               },
+               "athlete": {
+                    "id": 4119437,
+                    "resource_state": 1
+               },
+               "elapsed_time": 720,
+               "moving_time": 720,
+               "start_date": "2022-01-05T23:39:13Z",
+               "start_date_local": "2022-01-05T16:39:13Z",
+               "distance": 0.0,
+               "start_index": 2708,
+               "end_index": 3428,
+               "total_elevation_gain": 0,
+               "average_speed": 0.0,
+               "max_speed": 0.0,
+               "average_cadence": 83.1,
+               "device_watts": true,
+               "average_watts": 197.8,
+               "average_heartrate": 157.5,
+               "max_heartrate": 168.0,
+               "lap_index": 9,
+               "split": 9
+          },
+          {
+               "id": 21187816964,
+               "resource_state": 2,
+               "name": "Lap 10",
+               "activity": {
+                    "id": 6478999808,
+                    "resource_state": 1
+               },
+               "athlete": {
+                    "id": 4119437,
+                    "resource_state": 1
+               },
+               "elapsed_time": 180,
+               "moving_time": 180,
+               "start_date": "2022-01-05T23:51:13Z",
+               "start_date_local": "2022-01-05T16:51:13Z",
+               "distance": 0.0,
+               "start_index": 3429,
+               "end_index": 3609,
+               "total_elevation_gain": 0,
+               "average_speed": 0.0,
+               "max_speed": 0.0,
+               "average_cadence": 72.9,
+               "device_watts": true,
+               "average_watts": 103.7,
+               "average_heartrate": 153.3,
+               "max_heartrate": 165.0,
+               "lap_index": 10,
+               "split": 10
+          }
+     ],
+     "photos": {
+          "primary": {
+               "id": null,
+               "unique_id": "c021c839-8109-4709-aa4d-cc91a014ed57",
+               "urls": {
+                    "600": "https://dgtzuqphqg23d.cloudfront.net/luYMdGWyb1dm5GuvwzjSx2R0I5271mW6GkZ2SHNXiJo-768x512.jpg",
+                    "100": "https://dgtzuqphqg23d.cloudfront.net/luYMdGWyb1dm5GuvwzjSx2R0I5271mW6GkZ2SHNXiJo-128x85.jpg"
+               },
+               "source": 1
+          },
+          "use_primary_photo": true,
+          "count": 1
+     },
+     "stats_visibility": [
+          {
+               "type": "heart_rate",
+               "visibility": "everyone"
+          },
+          {
+               "type": "pace",
+               "visibility": "everyone"
+          },
+          {
+               "type": "power",
+               "visibility": "everyone"
+          },
+          {
+               "type": "speed",
+               "visibility": "everyone"
+          },
+          {
+               "type": "calories",
+               "visibility": "everyone"
+          }
+     ],
+     "hide_from_home": false,
+     "device_name": "TrainerRoad",
+     "embed_token": "9dfdb5020372a81ed16364e1b3d90b3ef2c92e87",
+     "private_note": null,
+     "available_zones": [
+          "heartrate",
+          "power"
+     ]
+}

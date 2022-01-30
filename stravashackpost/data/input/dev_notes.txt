@@ -5,11 +5,14 @@ Shit that works:
 - Pulling summary data from /athletes/{id}/stats
 - Pulling activity data from /athlete/activities
 - General activity summarization
+- Calculating ride distances for indoor trainer activities
+- Workaround for getting total weight lifting: Manually add weight into the activity's private notes, then pull that value
+- Preemptively pull and store the activity details for each activity.  Will use this later to replace the "on demand" activity details calls.
 
 Stuff that doesn't work:
 - Garmin only allows API access for enterprise developers.  Dick move.  Total weight for weightlifting had to be calculated manually
-- Garmin package for Python exists, but doesn't seem to actually work
+- You can use Python to pull down the gpx/tcx files for the strength activity, but it doesn't have anything but heart rate
 
 Stuff I haven't figured out yet:
-- Calories are in /activities/{id} and can only be accessed one activity at a time.  I'll have to build a loop to make an individual call for each activity.
+- Calories are in /activities/{id} and can only be accessed one activity at a time.  I have loops to pull down each indivual activity for calculating distance and weight, but I'll need to start storing those locally so I don't have to make a zillion api calls each time.
 ]s

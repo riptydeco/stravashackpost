@@ -12,7 +12,7 @@
      "premium": true,
      "summit": true,
      "created_at": "2014-03-13T20:08:35Z",
-     "updated_at": "2022-01-18T14:30:47Z",
+     "updated_at": "2022-01-29T01:10:22Z",
      "badge_type_id": 1,
      "weight": 88.4505,
      "profile_medium": "https://dgalywyr863hv.cloudfront.net/pictures/athletes/4119437/2387349/1/medium.jpg",
@@ -208,8 +208,8 @@
                "nickname": "Clifton",
                "resource_state": 2,
                "retired": false,
-               "distance": 97925,
-               "converted_distance": 60.8
+               "distance": 109634,
+               "converted_distance": 68.1
           },
           {
                "id": "g3959322",

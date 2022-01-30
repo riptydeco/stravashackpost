@@ -1,0 +1,125 @@
+{
+     "resource_state": 3,
+     "athlete": {
+          "id": 4119437,
+          "resource_state": 1
+     },
+     "name": "Evening Activity",
+     "distance": 0.0,
+     "moving_time": 2080,
+     "elapsed_time": 2080,
+     "total_elevation_gain": 0,
+     "type": "WeightTraining",
+     "id": 6577211962,
+     "start_date": "2022-01-25T01:40:14Z",
+     "start_date_local": "2022-01-24T18:40:14Z",
+     "timezone": "(GMT-07:00) America/Denver",
+     "utc_offset": -25200.0,
+     "location_city": null,
+     "location_state": null,
+     "location_country": "United States",
+     "achievement_count": 0,
+     "kudos_count": 1,
+     "comment_count": 0,
+     "athlete_count": 1,
+     "photo_count": 0,
+     "map": {
+          "id": "a6577211962",
+          "polyline": "",
+          "resource_state": 3
+     },
+     "trainer": true,
+     "commute": false,
+     "manual": false,
+     "private": false,
+     "visibility": "everyone",
+     "flagged": false,
+     "gear_id": null,
+     "start_latlng": [],
+     "end_latlng": [],
+     "start_latitude": null,
+     "start_longitude": null,
+     "average_speed": 0.0,
+     "max_speed": 0.0,
+     "has_heartrate": true,
+     "average_heartrate": 109.6,
+     "max_heartrate": 131.0,
+     "heartrate_opt_out": false,
+     "display_hide_heartrate_option": true,
+     "upload_id": 6993962854,
+     "upload_id_str": "6993962854",
+     "external_id": "garmin_push_8177238565",
+     "from_accepted_tag": false,
+     "pr_count": 0,
+     "total_photo_count": 0,
+     "has_kudoed": false,
+     "suffer_score": 6.0,
+     "description": "",
+     "calories": 205.0,
+     "perceived_exertion": null,
+     "prefer_perceived_exertion": false,
+     "segment_efforts": [],
+     "laps": [
+          {
+               "id": 21552143960,
+               "resource_state": 2,
+               "name": "Lap 1",
+               "activity": {
+                    "id": 6577211962,
+                    "resource_state": 1
+               },
+               "athlete": {
+                    "id": 4119437,
+                    "resource_state": 1
+               },
+               "elapsed_time": 2080,
+               "moving_time": 2080,
+               "start_date": "2022-01-25T01:40:14Z",
+               "start_date_local": "2022-01-24T18:40:14Z",
+               "distance": 0.0,
+               "start_index": 0,
+               "end_index": 951,
+               "total_elevation_gain": 0,
+               "average_speed": 0.0,
+               "max_speed": 0.0,
+               "device_watts": false,
+               "average_heartrate": 109.6,
+               "max_heartrate": 131.0,
+               "lap_index": 1,
+               "split": 1
+          }
+     ],
+     "photos": {
+          "primary": null,
+          "count": 0
+     },
+     "stats_visibility": [
+          {
+               "type": "heart_rate",
+               "visibility": "everyone"
+          },
+          {
+               "type": "pace",
+               "visibility": "everyone"
+          },
+          {
+               "type": "power",
+               "visibility": "everyone"
+          },
+          {
+               "type": "speed",
+               "visibility": "everyone"
+          },
+          {
+               "type": "calories",
+               "visibility": "everyone"
+          }
+     ],
+     "hide_from_home": false,
+     "device_name": "Garmin Forerunner 245 Music",
+     "embed_token": "337e5013e2b9884ee6f806606f9274273d3ce6df",
+     "private_note": "9770",
+     "available_zones": [
+          "heartrate"
+     ]
+}

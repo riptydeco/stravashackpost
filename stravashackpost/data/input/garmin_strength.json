@@ -1,0 +1,80 @@
+[
+     {
+          "id": 6463849809,
+          "start_date_local": "2022-01-02T16:03:31Z",
+          "elapsed_time": 1820,
+          "distance": 8245.0
+     },
+     {
+          "id": 6466705861,
+          "start_date_local": "2022-01-03T08:00:32Z",
+          "elapsed_time": 2161,
+          "distance": 8770.0
+     },
+     {
+          "id": 6484418408,
+          "start_date_local": "2022-01-06T18:47:44Z",
+          "elapsed_time": 1999,
+          "distance": 9823.0
+     },
+     {
+          "id": 6498244733,
+          "start_date_local": "2022-01-09T10:22:45Z",
+          "elapsed_time": 2833,
+          "distance": 13840.0
+     },
+     {
+          "id": 6504179245,
+          "start_date_local": "2022-01-10T16:43:16Z",
+          "elapsed_time": 2211,
+          "distance": 9478.0
+     },
+     {
+          "id": 6519837860,
+          "start_date_local": "2022-01-13T17:08:35Z",
+          "elapsed_time": 1648,
+          "distance": 9978.0
+     },
+     {
+          "id": 6539198004,
+          "start_date_local": "2022-01-17T11:00:34Z",
+          "elapsed_time": 2412,
+          "distance": 9228.0
+     },
+     {
+          "id": 6551609899,
+          "start_date_local": "2022-01-19T18:54:45Z",
+          "elapsed_time": 1594,
+          "distance": 8251.0
+     },
+     {
+          "id": 6556518702,
+          "start_date_local": "2022-01-20T18:55:39Z",
+          "elapsed_time": 2005,
+          "distance": 10620.0
+     },
+     {
+          "id": 6566064742,
+          "start_date_local": "2022-01-22T16:13:04Z",
+          "elapsed_time": 2166,
+          "distance": 8985.0
+     },
+     {
+          "id": 6577211962,
+          "start_date_local": "2022-01-24T18:40:14Z",
+          "elapsed_time": 2080,
+          "distance": 9770.0
+     },
+     {
+          "id": 6585034629,
+          "start_date_local": "2022-01-26T08:18:10Z",
+          "elapsed_time": 1443,
+          "distance": 11520.0
+     },
+     {
+          "id": 6596819690,
+          "start_date_local": "2022-01-28T17:18:14Z",
+          "elapsed_time": 1608,
+          "distance": 9670.0
+     }
+]

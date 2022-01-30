@@ -33,13 +33,27 @@ ride_types = {'Ride' : 'rode a bike',
 
 def format_weekly_activities(activity, dftw, hours, minutes):
     if activity == 'Run':
-        summary_string = '\n Running:  ' + '%d:%02d' % (hours, minutes) + ' | Total distance: ' + str(round(dftw[dftw['Activity']=='Run']['distance'].sum()/2200,1)) + ' mi'
+        #summary_string = '\n Running:  ' + '%d:%02d' % (hours, minutes) + ' | Total distance: ' + str(round(dftw[dftw['Activity']=='Run']['distance'].sum()/2200,1)) + ' mi'
+        run_count = dftw[dftw['Activity']=='Run']['distance'].count()
+        run_time_string = '%d:%02d' % (hours, minutes)
+        run_distance = round(dftw[dftw['Activity']=='Run']['distance'].sum()/2200,1)
+        summary_string = f'\n Running: {run_count} runs. Total distance: {run_distance:,} mi. Total time: {run_time_string}'
         return summary_string
+
     elif activity == 'Ride':
-        summary_string = '\n Cycling:  ' + '%d:%02d' % (hours, minutes) + ' | Total distance: ' + str(round(dftw[dftw['Activity']=='Ride']['distance'].sum()/2200,1)) + ' mi. Avg power: ' + str(round((dftw[dftw['Activity']=='Ride']['kilojoules'].sum() * 1000) / dftw[dftw['Activity']=='Ride']['moving_time'].sum())) + ' W'
+        #summary_string = '\n Cycling:  ' + '%d:%02d' % (hours, minutes) + ' | Total distance: ' + str(round(dftw[dftw['Activity']=='Ride']['distance'].sum()/2200,1)) + ' mi. Avg power: ' + str(round((dftw[dftw['Activity']=='Ride']['kilojoules'].sum() * 1000) / dftw[dftw['Activity']=='Ride']['moving_time'].sum())) + ' W'
+        ride_count = dftw[dftw['Activity']=='Ride']['distance'].count()
+        ride_time_string = '%d:%02d' % (hours, minutes)
+        ride_distance = round(dftw[dftw['Activity']=='Ride']['distance'].sum()/2200,1)
+        ride_power_string = str(round((dftw[dftw['Activity']=='Ride']['kilojoules'].sum() * 1000) / dftw[dftw['Activity']=='Ride']['moving_time'].sum()))
+        summary_string = f'\n Cycling: {ride_count} rides. Total distance: {ride_distance:,} mi. Total time: {ride_time_string}. Avg power: {ride_power_string} W'
         return summary_string
+
     elif activity == 'WeightTraining':
-        summary_string = '\n Strength:  ' + '%d:%02d' % (hours, minutes) + ' | Total weight: ' + '[PLACEHOLDER]' + ' lb'
+        strength_count = dftw[dftw['Activity']=='WeightTraining']['distance'].count()
+        strength_time_string = '%d:%02d' % (hours, minutes)
+        strength_weight = round(dftw[dftw['Activity']=='WeightTraining']['distance'].sum())
+        summary_string = f'\n Strength: {strength_count} sessions. Total weight: {strength_weight:,} lb. Total time: {strength_time_string}'
         return summary_string
     else:
         return 'Unrecognized activity'
@@ -66,6 +80,30 @@ def update_authorization(url, client_info):
         file_reader.jsonWriter('strava_token', res)
         print('new token acquired')
 
+def update_strength(df_temp_strength, athlete_data, activities_detail_url, access_token):
+    strength_update_json = file_reader.jsonLoader('garmin_strength')
+    strength_update = pandas.json_normalize(strength_update_json)
+    updated_strength = df_temp_strength.merge(strength_update, how='left', on=['id'], suffixes=('', '_new'))
+    updated_strength['distance'] = numpy.where(pandas.notnull(updated_strength['distance_new']), updated_strength['distance_new'], updated_strength['distance'])
+    updated_strength.drop('distance_new', axis=1, inplace=True)
+    df_temp_strength = updated_strength
+
+    strength_df = df_temp_strength[(df_temp_strength.type == 'WeightTraining')]
+    strength_df['activity_url'] = activities_detail_url + strength_df['id'].astype(str)
+    strength_detail_json = update_distances.get_strength_details(strength_df, activities_detail_url, access_token)
+
+    if len(strength_detail_json) > 0:
+        print(f'Calculating weight for {len(strength_detail_json)} sessions.')
+        strength_df_updated = update_distances.calc_strength_weight(strength_detail_json, strength_df, athlete_data)
+
+        strength_out = strength_df_updated[['id', 'start_date_local', 'elapsed_time', 'distance']]
+        strength_detail = []
+
+        for index, row in list(strength_out.iterrows()):
+            strength_detail.append(dict(row))
+
+        file_reader.jsonWriter('garmin_strength', strength_detail)
+
 
 def update_ride_distance(df_temp, athlete_data, activities_detail_url, access_token):
     # if 'Ride' in activity_types_this_week:
@@ -85,13 +123,32 @@ def update_ride_distance(df_temp, athlete_data, activities_detail_url, access_to
         print(f'Calculating distances for {len(ride_detail_json)} rides.')
         ridedf_updated = update_distances.calc_ride_distance(ride_detail_json, ridedf, athlete_data)
 
-        ride_out = ridedf_updated[['id', 'distance']]
+        ride_out = ridedf_updated[['id', 'distance', 'start_date_local']]
         ride_detail = []
 
         for index, row in list(ride_out.iterrows()):
             ride_detail.append(dict(row))
 
         file_reader.jsonWriter('strava_distance', ride_detail)
+
+def get_activity_details(detail_df, activity_detail_url, access_token, file_path):
+    activity_detail_par = {'include_all_efforts':  " "}
+    activity_detail_bearer = 'Bearer ' + access_token
+    activity_detail_header = {'Authorization': activity_detail_bearer}
+    detail_df['activity_detail_url'] = activity_detail_url + detail_df['id'].astype(str)
+    
+    for i in range(len(detail_df)):
+        dirname = os.path.dirname(__file__)
+        activity_id = detail_df.iloc[i]['id']
+        path = dirname + file_path + str(activity_id) + '.json'
+        if os.path.exists(path):
+            pass
+        else:
+            print(f'Details for activity {activity_id} not found.  Calling activities API... ', end='')
+            my_dataset = requests.get(detail_df.iloc[i]['activity_detail_url'], params=activity_detail_par, headers=activity_detail_header).json()
+            file_reader.jsonWriter('activity_detail', my_dataset)
+            print(f'done')
+        
 
 def clear():
     _ = os.system('clear')
@@ -127,6 +184,7 @@ def main():
 
     #http_proxy = file_reader.jsonLoader('proxy') #only needed behind firewall
     url_list = file_reader.jsonLoader('strava_url')
+    file_list = file_reader.jsonLoader('file_list')
     activities_url = file_reader.jsonLoader('strava_url')['activities']
     activities_detail_url = file_reader.jsonLoader('strava_url')['activity_detail']
     client_info = file_reader.jsonLoader('strava_client')
@@ -169,7 +227,9 @@ def main():
     #df = pandas.json_normalize(strava_api.get_logged_in_athlete_activities(url_list['activities'], access_token, first_day_of_year.timestamp()))
     print('Number of activities returned: ' + str(len(df)))
 
-    
+    # Download and store a copy of each activity detail file, to avoid constant calls.
+    print('Checking activity details...')
+    get_activity_details(df, url_list['activity_detail'], key_info['access_token'], file_list['activity_detail'])
 
     # Convert start_date to local timezone
     # Strava provides this in start_date_local, but I wanted to learn how to do it
@@ -193,6 +253,8 @@ def main():
     dftw = df[(pandas.to_datetime(df.localtimedt).dt.date >= first_day_of_week.date())] # This week's activities
     activity_count_this_week = len(pandas.unique(dftw['localtimedt']))
     activity_types_this_week = pandas.unique(dftw['type'])
+    #print(f'Activity list variable is type: {type(activity_types_this_week)}')
+    activity_types_this_week = numpy.sort(activity_types_this_week, axis=0)
 
     if 'Ride' in activity_types_this_week:
         update_ride_distance(df, athlete_data, url_list['activity_detail'], key_info['access_token'])
@@ -201,6 +263,17 @@ def main():
     ride_update_json = file_reader.jsonLoader('strava_distance')
     ride_update = pandas.json_normalize(ride_update_json)
     updated = df.merge(ride_update, how='left', on=['id'], suffixes=('', '_new'))
+    updated['distance'] = numpy.where(pandas.notnull(updated['distance_new']), updated['distance_new'], updated['distance'])
+    updated.drop('distance_new', axis=1, inplace=True)
+    df = updated
+
+    ### WEIGHT UPDATE HERE
+    if 'WeightTraining' in activity_types_this_week:
+        update_strength(df, athlete_data, url_list['activity_detail'], key_info['access_token'])
+
+    strength_update_json = file_reader.jsonLoader('garmin_strength')
+    strength_update = pandas.json_normalize(strength_update_json)
+    updated = df.merge(strength_update, how='left', on=['id'], suffixes=('', '_new'))
     updated['distance'] = numpy.where(pandas.notnull(updated['distance_new']), updated['distance_new'], updated['distance'])
     updated.drop('distance_new', axis=1, inplace=True)
     df = updated

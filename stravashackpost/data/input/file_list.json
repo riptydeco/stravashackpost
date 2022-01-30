@@ -7,6 +7,9 @@
     "shack_post": "/data/output/shackpost/shack_file",
     "dev_notes": "/data/input/dev_notes.txt",
     "activity_list": "/data/output/rawdata/activity_list.json",
+    "activity_detail": "/data/output/rawdata/activity_detail/activity_",
     "athlete_data": "/data/output/rawdata/athlete_data.json",
-    "athlete_summary": "/data/output/rawdata/athlete_summary.json"
+    "athlete_summary": "/data/output/rawdata/athlete_summary.json",
+    "garmin_strength": "/data/input/garmin_strength.json",
+    "file_list": "/data/input/file_list.json"
 }

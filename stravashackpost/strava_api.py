@@ -33,8 +33,8 @@ def get_logged_in_athlete_activities(url, access_token, after):
     param = {'access_token': access_token,
         #'before': datetime.datetime(2022, 1,10, 0, 0).timestamp(),
         #'after':  datetime.datetime(2022, 1,8, 0, 0).timestamp(),
-        'after': after
-        #'per_page': 200
+        'after': after,
+        'per_page': 200
         #,'page': 1
         }
 
