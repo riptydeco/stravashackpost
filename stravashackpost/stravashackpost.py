@@ -37,7 +37,16 @@ def format_weekly_activities(activity, dftw, hours, minutes):
         run_count = dftw[dftw['Activity']=='Run']['distance'].count()
         run_time_string = '%d:%02d' % (hours, minutes)
         run_distance = round(dftw[dftw['Activity']=='Run']['distance'].sum()/2200,1)
-        summary_string = f'\n Running: {run_count} runs. Total distance: {run_distance:,} mi. Total time: {run_time_string}'
+
+        run_cal_df = dftw[dftw['Activity']=='Run']
+        weekly_calories = 0.0
+        for i in range(len(run_cal_df)):
+            activity_detail = file_reader.jsonLoader('activity_detail', run_cal_df.iloc[i]['id'])
+            weekly_calories += activity_detail['calories']
+
+        #summary_string = f'\n Running: {run_count} runs. Total distance: {run_distance:,} mi. Total time: {run_time_string}.  Total calories: {int(round(weekly_calories,0))}'
+        summary_string = f'\n Running: I ran {run_count} times.  In {run_time_string} total I ran {run_distance:,} miles.  I burned {int(round(weekly_calories,0))} calories'
+
         return summary_string
 
     elif activity == 'Ride':
@@ -46,14 +55,32 @@ def format_weekly_activities(activity, dftw, hours, minutes):
         ride_time_string = '%d:%02d' % (hours, minutes)
         ride_distance = round(dftw[dftw['Activity']=='Ride']['distance'].sum()/2200,1)
         ride_power_string = str(round((dftw[dftw['Activity']=='Ride']['kilojoules'].sum() * 1000) / dftw[dftw['Activity']=='Ride']['moving_time'].sum()))
-        summary_string = f'\n Cycling: {ride_count} rides. Total distance: {ride_distance:,} mi. Total time: {ride_time_string}. Avg power: {ride_power_string} W'
+        
+        ride_cal_df = dftw[dftw['Activity']=='Ride']
+        weekly_calories = 0.0
+        for i in range(len(ride_cal_df)):
+            activity_detail = file_reader.jsonLoader('activity_detail', ride_cal_df.iloc[i]['id'])
+            weekly_calories += activity_detail['calories']
+        
+        #summary_string = f'\n Cycling: {ride_count} rides. Total distance: {ride_distance:,} mi. Total time: {ride_time_string}. Avg power: {ride_power_string} W.  Total calories: {int(round(weekly_calories,0))}'
+        summary_string = f'\n Cycling: I rode {ride_count} times.  In {ride_time_string} total I rode {ride_distance:,} miles, at an average power of {ride_power_string} watts.  I burned {int(round(weekly_calories,0))} calories'
+
         return summary_string
 
     elif activity == 'WeightTraining':
         strength_count = dftw[dftw['Activity']=='WeightTraining']['distance'].count()
         strength_time_string = '%d:%02d' % (hours, minutes)
         strength_weight = round(dftw[dftw['Activity']=='WeightTraining']['distance'].sum())
-        summary_string = f'\n Strength: {strength_count} sessions. Total weight: {strength_weight:,} lb. Total time: {strength_time_string}'
+        
+        strength_cal_df = dftw[dftw['Activity']=='WeightTraining']
+        weekly_calories = 0.0
+        for i in range(len(strength_cal_df)):
+            activity_detail = file_reader.jsonLoader('activity_detail', strength_cal_df.iloc[i]['id'])
+            weekly_calories += activity_detail['calories']
+        
+        #summary_string = f'\n Strength: {strength_count} sessions. Total weight: {strength_weight:,} lb. Total time: {strength_time_string}. Total calories: {int(round(weekly_calories,0))}'
+        summary_string = f'\n Strength: I lifted {strength_count} times.  In {strength_time_string} total I lifted {strength_weight:,} lbs.  I burned {int(round(weekly_calories,0))} calories'
+
         return summary_string
     else:
         return 'Unrecognized activity'
@@ -145,7 +172,8 @@ def get_activity_details(detail_df, activity_detail_url, access_token, file_path
             pass
         else:
             print(f'Details for activity {activity_id} not found.  Calling activities API... ', end='')
-            my_dataset = requests.get(detail_df.iloc[i]['activity_detail_url'], params=activity_detail_par, headers=activity_detail_header).json()
+            #my_dataset = requests.get(detail_df.iloc[i]['activity_detail_url'], params=activity_detail_par, headers=activity_detail_header).json()
+            my_dataset = strava_api.get_activity_details(detail_df.iloc[i]['activity_detail_url'], access_token)
             file_reader.jsonWriter('activity_detail', my_dataset)
             print(f'done')
         
@@ -325,38 +353,33 @@ def main():
     activity_minutes = math.trunc(((activity_seconds) / 60) % 60)
     activity_hours = math.trunc(((activity_seconds) / 3600) % 60)
 
+    # Calculate calories from activity detail files
+    weekly_calories = 0.0
+    for i in range(len(dftw)):
+        activity_detail = file_reader.jsonLoader('activity_detail', dftw.iloc[i]['id'])
+        weekly_calories += activity_detail['calories']
+
     # print('Total:','%d:%02d' % (activity_hours, activity_minutes))
-    shack_post_buffer = '\nTotal: ' + '%d:%02d' % (activity_hours, activity_minutes)
+    weekly_activity_time = '%d:%02d' % (activity_hours, activity_minutes)
+    shack_post_buffer = f'\nTotal: {weekly_activity_time} active time. {int(round(weekly_calories))} calories.'
+    #shack_post_buffer = '\nTotal: ' + '%d:%02d' % (activity_hours, activity_minutes) + ' active time. ' + str(int(round(weekly_calories,0))) + ' calories.'
     shack_post = ''.join([shack_post, shack_post_buffer])
 
     shack_post = ''.join([shack_post,  strava_summary.athlete_summary(url_list['athlete_summary'], access_token)])
-    shack_post = ''.join([shack_post, '\n\nPost /[mostly]/ generated with a Python script pulling from the Strava API. '])
-    shack_post = ''.join([shack_post, 'I will post the code when I figure out wtf I am doing.\n\n'])
+    shack_post = ''.join([shack_post, '\n\nPost generated with a Python script pulling from the Strava API\n\n'])
     shack_post = ''.join([shack_post,  str(file_reader.textLoader('dev_notes'))])
-    shack_post = ''.join([shack_post, 'testing the new way of adding lines'])
 
     file_reader.textWriter('shack_post', shack_post)
 
-    #def ride_distance
-
-    # NEED TO MAKE THIS CONDITIONAL ON IF RIDE TYPE EXISTS
-    # if 'Ride' in activity_types_this_week:
-    #     ridedf = df[(df.type == 'Ride')]
-    #     ridedf['activity_url'] = activities_detail_url + ridedf['id'].astype(str)
-    #     ride_detail_json = update_distances.get_ride_details(ridedf, activities_detail_url, access_token)
-
-    #     ## SEEMS TO BE ONLY UPDATING ONE RIDE
-    #     if len(ride_detail_json) > 0:
-    #         print(f'Calculating distances for {len(ride_detail_json)} rides.')
-    #         ridedf_updated = update_distances.calc_ride_distance(ride_detail_json, ridedf, athlete_data)
-
-    #         ride_out = ridedf_updated[['id', 'distance']]
-    #         ride_detail = []
-
-    #         for index, row in list(ride_out.iterrows()):
-    #             ride_detail.append(dict(row))
-
-    #         file_reader.jsonWriter('strava_distance', ride_detail)
+    # Possible future thing to get average running pace
+    # total_run_distance = dftw[dftw['Activity']=='Run']['distance'].sum()
+    # total_run_time = dftw[dftw['Activity']=='Run']['elapsed_time'].sum()
+    # print(f'Total run distance this week: {total_run_distance}')
+    # print(f'Total run time this week: {total_run_time}')
+    # meters_per_second = total_run_distance/total_run_time
+    # print(f'Meters per second = {meters_per_second}')
+    # miles_per_hour = (total_run_distance/2200)/(total_run_time/3600)
+    # print(f'Miles per hour = {miles_per_hour}')
 
 if __name__ == '__main__':
     main()

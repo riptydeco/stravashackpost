@@ -10,11 +10,14 @@ file_name = dirname + '/data/input/file_list.json'
 
 #file_type = 'StravaToken'
 
-def jsonLoader(file_type):
+def jsonLoader(file_type, id=None):
     with open(file_name) as f:
         file_list = json.load(f)
         #input_file = file_list[file_type]
         input_file = dirname + file_list[file_type]
+
+    if file_type == 'activity_detail':
+        input_file += f'{id}.json'
 
     with open(input_file) as f:
         #access_credentials  = json.load(f)
@@ -36,13 +39,13 @@ def jsonWriter(file_type, output):
     with open(file_name) as f:
         file_list = json.load(f)
         output_file = dirname + file_list[file_type]
-        print('Writing to... ', output_file)
 
     if file_type == 'activity_detail':
         activity_id = output['id']
         output_file += f'{activity_id}.json'
 
     with open(output_file, 'w') as outfile:
+        print('Writing to... ', output_file)
         json.dump(output, outfile, indent=5)
 
 def textWriter(file_type, output):

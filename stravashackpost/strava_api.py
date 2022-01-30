@@ -1,5 +1,6 @@
 #!/user/bin/env python3
 
+from email import header
 import requests
 from yaspin import yaspin
 import datetime
@@ -45,6 +46,12 @@ def get_logged_in_athlete_activities(url, access_token, after):
     print(f'Getting activities data from {url}... done')
     #activities_df = pandas.json_normalize(my_dataset)
     #activities_df.to_csv('/Users/Craig/Documents/pythonApps/athleteAPI/files/Activities.csv')
+    return(my_dataset)
+
+def get_activity_details(url, access_token):
+    param = {'include_all_efforts':  " "}
+    header = {'Authorization': 'Bearer ' + access_token}
+    my_dataset = requests.get(url, params=param, headers=header).json()
     return(my_dataset)
 
 def get_athlete_stats(url, access_token):

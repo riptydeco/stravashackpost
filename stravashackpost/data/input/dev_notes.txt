@@ -1,5 +1,7 @@
 s[Dev Notes:
 
+Code repository: https://github.com/riptydeco/stravashackpost
+
 Shit that works:
 - Managing access token refreshes with Strava's oath system
 - Pulling summary data from /athletes/{id}/stats
@@ -8,11 +10,12 @@ Shit that works:
 - Calculating ride distances for indoor trainer activities
 - Workaround for getting total weight lifting: Manually add weight into the activity's private notes, then pull that value
 - Preemptively pull and store the activity details for each activity.  Will use this later to replace the "on demand" activity details calls.
+- Calculated calories from activity detail files
 
 Stuff that doesn't work:
 - Garmin only allows API access for enterprise developers.  Dick move.  Total weight for weightlifting had to be calculated manually
 - You can use Python to pull down the gpx/tcx files for the strength activity, but it doesn't have anything but heart rate
 
-Stuff I haven't figured out yet:
-- Calories are in /activities/{id} and can only be accessed one activity at a time.  I have loops to pull down each indivual activity for calculating distance and weight, but I'll need to start storing those locally so I don't have to make a zillion api calls each time.
+To-do:
+- Strava has a limit of 200 activities per result set.  Need to create a loop to deal with this... sometime before July :P
 ]s
