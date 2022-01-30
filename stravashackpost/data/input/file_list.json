@@ -1,15 +1,15 @@
 {
     "proxy": "/data/input/network_proxy.json",
-    "strava_token": "/data/input/strava_access_token.json",
+    "strava_token": "/data/input/personal/strava_access_token.json",
     "strava_client": "/data/input/client_info.json",
     "strava_url": "/data/input/strava_url.json",
-    "strava_distance": "/data/input/strava_distance.json",
+    "strava_distance": "/data/input/personal/strava_distance.json",
     "shack_post": "/data/output/shackpost/shack_file",
     "dev_notes": "/data/input/dev_notes.txt",
     "activity_list": "/data/output/rawdata/activity_list.json",
     "activity_detail": "/data/output/rawdata/activity_detail/activity_",
     "athlete_data": "/data/output/rawdata/athlete_data.json",
     "athlete_summary": "/data/output/rawdata/athlete_summary.json",
-    "garmin_strength": "/data/input/garmin_strength.json",
+    "garmin_strength": "/data/input/personal/garmin_strength.json",
     "file_list": "/data/input/file_list.json"
 }
