@@ -1,2 +1,17 @@
 # stravashackpost
  Shacknews fitness post generator from Strava data
+
+This is a learning project, and thus does not use Strava's pre-built Swagger package.  Other repos make use of that.
+
+Steps to set up and make use of this repo:
+
+Follow Strava's 'Getting Started' guide here: https://developers.strava.com/docs/getting-started/
+
+NOTE: the app authorization step says to use this url: http://www.strava.com/oauth/authorize?client_id=[REPLACE_WITH_YOUR_CLIENT_ID]&response_type=code&redirect_uri=http://localhost/exchange_token&approval_prompt=force&scope=read
+
+This will not give the scope required to get activity details and athlete summaries.  Instead, during that step you should use this url: http://www.strava.com/oauth/authorize?client_id=[REPLACE_WITH_YOUR_CLIENT_ID]&response_type=code&redirect_uri=http://localhost/exchange_token&approval_prompt=force&scope=read,activity:read_all,profile:read_all
+
+After the final step that gets your initial access token and refresh token using Postman, copy and paste the resulting json into /data/input/personal/strava_access_token.json . From that point forward, the routine will automatically refresh your access token as necessary when you run the script.
+
+
+
