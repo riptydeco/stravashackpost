@@ -12,7 +12,7 @@
      "premium": true,
      "summit": true,
      "created_at": "2014-03-13T20:08:35Z",
-     "updated_at": "2022-01-29T01:10:22Z",
+     "updated_at": "2022-02-01T22:25:49Z",
      "badge_type_id": 1,
      "weight": 88.4505,
      "profile_medium": "https://dgalywyr863hv.cloudfront.net/pictures/athletes/4119437/2387349/1/medium.jpg",
@@ -137,7 +137,7 @@
                "owner": false
           }
      ],
-     "ftp": 249,
+     "ftp": 269,
      "bikes": [
           {
                "id": "b3498197",

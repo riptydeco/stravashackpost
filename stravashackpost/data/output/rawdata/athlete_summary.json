@@ -2,25 +2,25 @@
      "biggest_ride_distance": 163605.0,
      "biggest_climb_elevation_gain": 1000.9000000000001,
      "recent_ride_totals": {
-          "count": 9,
+          "count": 11,
           "distance": 0.0,
-          "moving_time": 35100,
-          "elapsed_time": 35100,
+          "moving_time": 40824,
+          "elapsed_time": 40824,
           "elevation_gain": 0.0,
           "achievement_count": 0
      },
      "all_ride_totals": {
-          "count": 576,
+          "count": 578,
           "distance": 10872875,
-          "moving_time": 2233244,
-          "elapsed_time": 2452289,
+          "moving_time": 2238968,
+          "elapsed_time": 2458013,
           "elevation_gain": 138311
      },
      "recent_run_totals": {
-          "count": 8,
-          "distance": 31667.910400390625,
-          "moving_time": 12477,
-          "elapsed_time": 12493,
+          "count": 7,
+          "distance": 28195.560302734375,
+          "moving_time": 11244,
+          "elapsed_time": 11260,
           "elevation_gain": 60.84000015258789,
           "achievement_count": 0
      },
@@ -47,10 +47,10 @@
           "elevation_gain": 367
      },
      "ytd_ride_totals": {
-          "count": 9,
+          "count": 11,
           "distance": 0,
-          "moving_time": 35100,
-          "elapsed_time": 35100,
+          "moving_time": 40824,
+          "elapsed_time": 40824,
           "elevation_gain": 0
      },
      "ytd_run_totals": {

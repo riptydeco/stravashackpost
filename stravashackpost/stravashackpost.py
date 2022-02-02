@@ -222,13 +222,13 @@ def main():
     key_info = file_reader.jsonLoader('strava_token')
     #access_token = file_reader.jsonLoader('strava_token')['access_token']
     access_token = key_info['access_token']
-
-    #print('Activities API is ', activities_url)
-
-    #athlete_data = strava_athlete.getAthlete()
+    
     athlete_data = strava_api.get_logged_in_athlete(url_list['athlete'], access_token)
     file_reader.jsonWriter('athlete_data', athlete_data)
-
+  
+    athlete_data_previous = file_reader.jsonLoader('athlete_ftp_history')
+    i = len(athlete_data_previous)
+    athlete_ftp_prev = athlete_data_previous[i-1]['ftp']
 
     # Retrieve athlete data, and calculate power-to-weight ratio (Watts/kg)
     athlete_id = athlete_data['id']
@@ -241,12 +241,38 @@ def main():
     athlete_ftp = round(athlete_data['ftp'],2)
     athlete_wkg = round(athlete_ftp / athlete_weight_kg,2)
 
+    #updated ftp stuff
+    if athlete_ftp_prev != athlete_ftp:
+        athlete_data_new = {"date": str(datetime.date.today()), "weight": athlete_weight_kg, "ftp": athlete_ftp, "wkg": athlete_wkg}
+        athlete_data_previous.append(athlete_data_new)
+        file_reader.jsonWriter('athlete_ftp_history', athlete_data_previous)
+
+    athlete_ftp_change_pct = ((athlete_ftp - athlete_data_previous[0]['ftp']) / athlete_data_previous[0]['ftp']) * 100
+    print(f'ftp change is {athlete_ftp_change_pct:.0f}%')
+    if athlete_ftp_change_pct == 0:
+        ftp_chg_str = ''
+    elif athlete_ftp_change_pct > 0:
+        ftp_chg_str = ' (g{+' + str(int(round(athlete_ftp_change_pct,0))) + '%}g this year)'
+    elif athlete_ftp_change_pct < 0:
+        ftp_chg_str = ' (r{-' + str(int(round(athlete_ftp_change_pct,0))) + '%}g this year)'
+    print(ftp_chg_str)
+
+    athlete_wkg_change_pct = ((athlete_wkg - athlete_data_previous[0]['wkg']) / athlete_data_previous[0]['wkg']) * 100
+    print(f'wkg change is {athlete_ftp_change_pct:.0f}%')
+    if athlete_wkg_change_pct == 0:
+        wkg_chg_str = ''
+    elif athlete_wkg_change_pct > 0:
+        wkg_chg_str = ' (g{+' + str(int(round(athlete_wkg_change_pct,0))) + '%}g this year)'
+    elif athlete_wkg_change_pct < 0:
+        wkg_chg_str = ' (r{-' + str(int(round(athlete_wkg_change_pct,0))) + '%}g this year)'
+    print(wkg_chg_str)
+
     week_start_str = datetime.datetime.strftime(first_day_of_week, '%B %d')
     week_end_str = datetime.datetime.strftime(last_day_of_week, '%B %d, %Y')
 
     shack_post = ''.join([shack_post, f'This week\'s summary for {athlete_first_name} {athlete_last_name} from {athlete_city}, {athlete_state}'])
     shack_post = ''.join([shack_post, f', for the week of {week_start_str} through {week_end_str}:\n\n'])
-    shack_post = ''.join([shack_post, f'Currently, my FTP is {athlete_ftp} and my weight is {athlete_weight_lb}, giving me a W/kg of {athlete_wkg}.\n\n'])
+    shack_post = ''.join([shack_post, f'Currently, my FTP is {athlete_ftp}{ftp_chg_str} and my weight is {athlete_weight_lb}, giving me a W/kg of {athlete_wkg}{wkg_chg_str}.\n\n'])
 
     #df = call_activity_api(activities_url, access_token, first_day_of_year.timestamp()) # Call activities API and pull list of activities
     activity_dataset = strava_api.get_logged_in_athlete_activities(url_list['activities'], access_token, first_day_of_year.timestamp())
@@ -370,16 +396,6 @@ def main():
     shack_post = ''.join([shack_post,  str(file_reader.textLoader('dev_notes'))])
 
     file_reader.textWriter('shack_post', shack_post)
-
-    # Possible future thing to get average running pace
-    # total_run_distance = dftw[dftw['Activity']=='Run']['distance'].sum()
-    # total_run_time = dftw[dftw['Activity']=='Run']['elapsed_time'].sum()
-    # print(f'Total run distance this week: {total_run_distance}')
-    # print(f'Total run time this week: {total_run_time}')
-    # meters_per_second = total_run_distance/total_run_time
-    # print(f'Meters per second = {meters_per_second}')
-    # miles_per_hour = (total_run_distance/2200)/(total_run_time/3600)
-    # print(f'Miles per hour = {miles_per_hour}')
 
 if __name__ == '__main__':
     main()

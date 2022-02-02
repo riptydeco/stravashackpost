@@ -11,5 +11,6 @@
     "athlete_data": "/data/output/rawdata/athlete_data.json",
     "athlete_summary": "/data/output/rawdata/athlete_summary.json",
     "garmin_strength": "/data/input/personal/garmin_strength.json",
-    "file_list": "/data/input/file_list.json"
+    "file_list": "/data/input/file_list.json",
+    "athlete_ftp_history": "/data/input/personal/athlete_ftp_history.json"
 }
