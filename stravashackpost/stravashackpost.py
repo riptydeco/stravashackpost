@@ -90,7 +90,7 @@ def update_authorization(url, client_info):
     #spinner = yaspin()
 
     #http_proxy = file_reader.jsonLoader('proxy') #only if needed
-    oauth_url = file_reader.jsonLoader('strava_url')['oauth']
+    #oauth_url = file_reader.jsonLoader('strava_url')['oauth']
     client_info = file_reader.jsonLoader('strava_client')
     access_key = file_reader.jsonLoader('strava_token')
     
@@ -103,7 +103,8 @@ def update_authorization(url, client_info):
 
     else:
         print('access token expired.  Fetching new token... ', end='')
-        res = strava_api.strava_oauth(oauth_url, client_info, access_key)
+        #res = strava_api.strava_oauth(oauth_url, client_info, access_key)
+        res = strava_api.strava_oauth(url, client_info, access_key)
         file_reader.jsonWriter('strava_token', res)
         print('new token acquired')
 
@@ -255,7 +256,6 @@ def main():
         ftp_chg_str = ' (g{+' + str(int(round(athlete_ftp_change_pct,0))) + '%}g this year)'
     elif athlete_ftp_change_pct < 0:
         ftp_chg_str = ' (r{-' + str(int(round(athlete_ftp_change_pct,0))) + '%}g this year)'
-    print(ftp_chg_str)
 
     athlete_wkg_change_pct = ((athlete_wkg - athlete_data_previous[0]['wkg']) / athlete_data_previous[0]['wkg']) * 100
     print(f'wkg change is {athlete_ftp_change_pct:.0f}%')
@@ -265,7 +265,6 @@ def main():
         wkg_chg_str = ' (g{+' + str(int(round(athlete_wkg_change_pct,0))) + '%}g this year)'
     elif athlete_wkg_change_pct < 0:
         wkg_chg_str = ' (r{-' + str(int(round(athlete_wkg_change_pct,0))) + '%}g this year)'
-    print(wkg_chg_str)
 
     week_start_str = datetime.datetime.strftime(first_day_of_week, '%B %d')
     week_end_str = datetime.datetime.strftime(last_day_of_week, '%B %d, %Y')
