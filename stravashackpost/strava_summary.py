@@ -47,7 +47,7 @@ def athlete_summary(url, access_token):
 
     # Calculate cycling totals
     # This year
-    ride_count_this_year = my_dataset['ytd_run_totals']['count']
+    ride_count_this_year = my_dataset['ytd_ride_totals']['count']
     ride_miles_this_year = ride_distance['distance'].sum()/2200 # From estimator
     ride_minutes_this_year = math.trunc((my_dataset['ytd_ride_totals']['elapsed_time']/60) % 60)
     ride_hours_this_year = math.trunc((my_dataset['ytd_ride_totals']['elapsed_time']/3600) % 60)

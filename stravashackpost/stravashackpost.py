@@ -249,7 +249,7 @@ def main():
         file_reader.jsonWriter('athlete_ftp_history', athlete_data_previous)
 
     athlete_ftp_change_pct = ((athlete_ftp - athlete_data_previous[0]['ftp']) / athlete_data_previous[0]['ftp']) * 100
-    print(f'ftp change is {athlete_ftp_change_pct:.0f}%')
+    print(f'ftp change since Jan 1 is {athlete_ftp_change_pct:.0f}%')
     if athlete_ftp_change_pct == 0:
         ftp_chg_str = ''
     elif athlete_ftp_change_pct > 0:
@@ -258,7 +258,7 @@ def main():
         ftp_chg_str = ' (r{-' + str(int(round(athlete_ftp_change_pct,0))) + '%}g this year)'
 
     athlete_wkg_change_pct = ((athlete_wkg - athlete_data_previous[0]['wkg']) / athlete_data_previous[0]['wkg']) * 100
-    print(f'wkg change is {athlete_ftp_change_pct:.0f}%')
+    print(f'wkg change since Jan 1 is {athlete_ftp_change_pct:.0f}%')
     if athlete_wkg_change_pct == 0:
         wkg_chg_str = ''
     elif athlete_wkg_change_pct > 0:
@@ -279,6 +279,8 @@ def main():
     df = pandas.json_normalize(activity_dataset)
     #df = pandas.json_normalize(strava_api.get_logged_in_athlete_activities(url_list['activities'], access_token, first_day_of_year.timestamp()))
     print('Number of activities returned: ' + str(len(df)))
+    #print(df['type'].value_counts)
+    print(df.groupby('type').count())
 
     # Download and store a copy of each activity detail file, to avoid constant calls.
     print('Checking activity details...')
