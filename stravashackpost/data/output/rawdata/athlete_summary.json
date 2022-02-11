@@ -2,33 +2,33 @@
      "biggest_ride_distance": 163605.0,
      "biggest_climb_elevation_gain": 1000.9000000000001,
      "recent_ride_totals": {
-          "count": 11,
+          "count": 12,
           "distance": 0.0,
-          "moving_time": 42624,
-          "elapsed_time": 42624,
+          "moving_time": 47124,
+          "elapsed_time": 47124,
           "elevation_gain": 0.0,
           "achievement_count": 0
      },
      "all_ride_totals": {
-          "count": 580,
+          "count": 582,
           "distance": 10872875,
-          "moving_time": 2247968,
-          "elapsed_time": 2467013,
+          "moving_time": 2255168,
+          "elapsed_time": 2474213,
           "elevation_gain": 138311
      },
      "recent_run_totals": {
           "count": 5,
-          "distance": 22952.34033203125,
-          "moving_time": 9132,
-          "elapsed_time": 9148,
+          "distance": 23007.10009765625,
+          "moving_time": 9074,
+          "elapsed_time": 9090,
           "elevation_gain": 60.84000015258789,
           "achievement_count": 0
      },
      "all_run_totals": {
-          "count": 637,
-          "distance": 3890231,
-          "moving_time": 1521668,
-          "elapsed_time": 1601960,
+          "count": 638,
+          "distance": 3894657,
+          "moving_time": 1523219,
+          "elapsed_time": 1603511,
           "elevation_gain": 41589
      },
      "recent_swim_totals": {
@@ -47,17 +47,17 @@
           "elevation_gain": 367
      },
      "ytd_ride_totals": {
-          "count": 13,
+          "count": 15,
           "distance": 0,
-          "moving_time": 49824,
-          "elapsed_time": 49824,
+          "moving_time": 57024,
+          "elapsed_time": 57024,
           "elevation_gain": 0
      },
      "ytd_run_totals": {
-          "count": 9,
-          "distance": 35982,
-          "moving_time": 13981,
-          "elapsed_time": 13997,
+          "count": 10,
+          "distance": 40408,
+          "moving_time": 15532,
+          "elapsed_time": 15548,
           "elevation_gain": 61
      },
      "ytd_swim_totals": {

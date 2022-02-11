@@ -36,7 +36,7 @@ def format_weekly_activities(activity, dftw, hours, minutes):
         #summary_string = '\n Running:  ' + '%d:%02d' % (hours, minutes) + ' | Total distance: ' + str(round(dftw[dftw['Activity']=='Run']['distance'].sum()/2200,1)) + ' mi'
         run_count = dftw[dftw['Activity']=='Run']['distance'].count()
         run_time_string = '%d:%02d' % (hours, minutes)
-        run_distance = round(dftw[dftw['Activity']=='Run']['distance'].sum()/2200,1)
+        run_distance = round(dftw[dftw['Activity']=='Run']['distance'].sum()/1609,1) # /1609 converts meters to miles
 
         run_cal_df = dftw[dftw['Activity']=='Run']
         weekly_calories = 0.0
@@ -53,7 +53,7 @@ def format_weekly_activities(activity, dftw, hours, minutes):
         #summary_string = '\n Cycling:  ' + '%d:%02d' % (hours, minutes) + ' | Total distance: ' + str(round(dftw[dftw['Activity']=='Ride']['distance'].sum()/2200,1)) + ' mi. Avg power: ' + str(round((dftw[dftw['Activity']=='Ride']['kilojoules'].sum() * 1000) / dftw[dftw['Activity']=='Ride']['moving_time'].sum())) + ' W'
         ride_count = dftw[dftw['Activity']=='Ride']['distance'].count()
         ride_time_string = '%d:%02d' % (hours, minutes)
-        ride_distance = round(dftw[dftw['Activity']=='Ride']['distance'].sum()/2200,1)
+        ride_distance = round(dftw[dftw['Activity']=='Ride']['distance'].sum()/1609,1) # /1609 converts meters to miles
         ride_power_string = str(round((dftw[dftw['Activity']=='Ride']['kilojoules'].sum() * 1000) / dftw[dftw['Activity']=='Ride']['moving_time'].sum()))
         
         ride_cal_df = dftw[dftw['Activity']=='Ride']
@@ -249,7 +249,7 @@ def main():
         file_reader.jsonWriter('athlete_ftp_history', athlete_data_previous)
 
     athlete_ftp_change_pct = ((athlete_ftp - athlete_data_previous[0]['ftp']) / athlete_data_previous[0]['ftp']) * 100
-    print(f'ftp change since Jan 1 is {athlete_ftp_change_pct:.0f}%')
+    #print(f'ftp change since Jan 1 is {athlete_ftp_change_pct:.0f}%')
     if athlete_ftp_change_pct == 0:
         ftp_chg_str = ''
     elif athlete_ftp_change_pct > 0:
@@ -258,7 +258,7 @@ def main():
         ftp_chg_str = ' (r{-' + str(int(round(athlete_ftp_change_pct,0))) + '%}g this year)'
 
     athlete_wkg_change_pct = ((athlete_wkg - athlete_data_previous[0]['wkg']) / athlete_data_previous[0]['wkg']) * 100
-    print(f'wkg change since Jan 1 is {athlete_ftp_change_pct:.0f}%')
+    #print(f'wkg change since Jan 1 is {athlete_ftp_change_pct:.0f}%')
     if athlete_wkg_change_pct == 0:
         wkg_chg_str = ''
     elif athlete_wkg_change_pct > 0:
@@ -279,8 +279,6 @@ def main():
     df = pandas.json_normalize(activity_dataset)
     #df = pandas.json_normalize(strava_api.get_logged_in_athlete_activities(url_list['activities'], access_token, first_day_of_year.timestamp()))
     print('Number of activities returned: ' + str(len(df)))
-    #print(df['type'].value_counts)
-    print(df.groupby('type').count())
 
     # Download and store a copy of each activity detail file, to avoid constant calls.
     print('Checking activity details...')

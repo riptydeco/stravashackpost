@@ -80,7 +80,8 @@ def calc_ride_distance(ride_detail_json, ridedf, athlete_data):
         print(' '*5, 'Ride:', ride_detail.iloc[i]['id'], '. Current distance: ', ride_detail.iloc[i]['distance'], '. Average Power: ', ride_detail.iloc[i]['average_watts'])
         watts_per_kg = ride_detail.iloc[i]['average_watts'] / athlete_weight_kg
         estimated_speed = cycling_speed.calc_speed(watts_per_kg, 0, athlete_weight_kg, bike_weight_kg, air_density)
-        estimated_distance = estimated_speed * (ride_detail.iloc[i]['elapsed_time'] / 3600) * 2200
+        #estimated_distance = estimated_speed * (ride_detail.iloc[i]['elapsed_time'] / 3600) * 1609
+        estimated_distance = estimated_speed * (ride_detail.iloc[i]['elapsed_time']) # if cycling_speed is returning m/s
         print(' '*10, 'Estimated speed is: ', estimated_speed, 'mph. Estimated distance is: ', estimated_distance, 'm')
         #ride_detail.iloc[i]['average_speed'] = estimated_speed
         #ride_detail.iloc[i]['distance'] = estimated_distance

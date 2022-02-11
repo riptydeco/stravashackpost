@@ -58,7 +58,8 @@ def calc_speed(watts_per_kg, grad, body_mass, bike_mass, rho, CdA=0.45, Crr=0.00
     a0 = -1.0 * watts_per_kg*body_mass * (1.0-L_dt)
     rts = np.roots([a3, 0, a1, a0])
     # one should be real, return that one
-    return [r.real*2.237 for r in rts if r.imag==0][0] #2.237 changes m/s to mph
+    #return [r.real*2.237 for r in rts if r.imag==0][0] #2.237 changes m/s to mph
+    return [r.real for r in rts if r.imag==0][0] #returns m/s.  In update_distances, use appropriate line.
 
     #P_vals = np.arange(1.0,22.1,3.0)
     #grad_vals = np.arange(0.0,0.252,0.002)
@@ -67,7 +68,7 @@ def calc_speed(watts_per_kg, grad, body_mass, bike_mass, rho, CdA=0.45, Crr=0.00
     #print(df['mph'])
 
 def main():
-    altitude_m = 1500
+    altitude_m = 1500 # can remove.  It's now passed in from the calling function
     bodyWeightLb = 197
     bikeWeightLb = 15
     body_mass = bodyWeightLb / 2.2
