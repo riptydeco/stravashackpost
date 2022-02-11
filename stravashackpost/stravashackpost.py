@@ -12,7 +12,6 @@ import pandas
 import os
 from yaspin import yaspin
 import file_reader
-#import strava_authorization
 import strava_summary
 import strava_athlete
 import math
@@ -33,36 +32,32 @@ ride_types = {'Ride' : 'rode a bike',
 
 def format_weekly_activities(activity, dftw, hours, minutes):
     if activity == 'Run':
-        #summary_string = '\n Running:  ' + '%d:%02d' % (hours, minutes) + ' | Total distance: ' + str(round(dftw[dftw['Activity']=='Run']['distance'].sum()/2200,1)) + ' mi'
         run_count = dftw[dftw['Activity']=='Run']['distance'].count()
         run_time_string = '%d:%02d' % (hours, minutes)
         run_distance = round(dftw[dftw['Activity']=='Run']['distance'].sum()/1609,1) # /1609 converts meters to miles
-
         run_cal_df = dftw[dftw['Activity']=='Run']
         weekly_calories = 0.0
+        
         for i in range(len(run_cal_df)):
             activity_detail = file_reader.jsonLoader('activity_detail', run_cal_df.iloc[i]['id'])
             weekly_calories += activity_detail['calories']
 
-        #summary_string = f'\n Running: {run_count} runs. Total distance: {run_distance:,} mi. Total time: {run_time_string}.  Total calories: {int(round(weekly_calories,0))}'
         summary_string = f'\n Running: I ran {run_count} times.  In {run_time_string} total I ran {run_distance:,} miles.  I burned {int(round(weekly_calories,0))} calories'
 
         return summary_string
 
     elif activity == 'Ride':
-        #summary_string = '\n Cycling:  ' + '%d:%02d' % (hours, minutes) + ' | Total distance: ' + str(round(dftw[dftw['Activity']=='Ride']['distance'].sum()/2200,1)) + ' mi. Avg power: ' + str(round((dftw[dftw['Activity']=='Ride']['kilojoules'].sum() * 1000) / dftw[dftw['Activity']=='Ride']['moving_time'].sum())) + ' W'
         ride_count = dftw[dftw['Activity']=='Ride']['distance'].count()
         ride_time_string = '%d:%02d' % (hours, minutes)
         ride_distance = round(dftw[dftw['Activity']=='Ride']['distance'].sum()/1609,1) # /1609 converts meters to miles
         ride_power_string = str(round((dftw[dftw['Activity']=='Ride']['kilojoules'].sum() * 1000) / dftw[dftw['Activity']=='Ride']['moving_time'].sum()))
-        
         ride_cal_df = dftw[dftw['Activity']=='Ride']
         weekly_calories = 0.0
+        
         for i in range(len(ride_cal_df)):
             activity_detail = file_reader.jsonLoader('activity_detail', ride_cal_df.iloc[i]['id'])
             weekly_calories += activity_detail['calories']
         
-        #summary_string = f'\n Cycling: {ride_count} rides. Total distance: {ride_distance:,} mi. Total time: {ride_time_string}. Avg power: {ride_power_string} W.  Total calories: {int(round(weekly_calories,0))}'
         summary_string = f'\n Cycling: I rode {ride_count} times.  In {ride_time_string} total I rode {ride_distance:,} miles, at an average power of {ride_power_string} watts.  I burned {int(round(weekly_calories,0))} calories'
 
         return summary_string
@@ -71,29 +66,24 @@ def format_weekly_activities(activity, dftw, hours, minutes):
         strength_count = dftw[dftw['Activity']=='WeightTraining']['distance'].count()
         strength_time_string = '%d:%02d' % (hours, minutes)
         strength_weight = round(dftw[dftw['Activity']=='WeightTraining']['distance'].sum())
-        
         strength_cal_df = dftw[dftw['Activity']=='WeightTraining']
         weekly_calories = 0.0
+        
         for i in range(len(strength_cal_df)):
             activity_detail = file_reader.jsonLoader('activity_detail', strength_cal_df.iloc[i]['id'])
             weekly_calories += activity_detail['calories']
         
-        #summary_string = f'\n Strength: {strength_count} sessions. Total weight: {strength_weight:,} lb. Total time: {strength_time_string}. Total calories: {int(round(weekly_calories,0))}'
         summary_string = f'\n Strength: I lifted {strength_count} times.  In {strength_time_string} total I lifted {strength_weight:,} lbs.  I burned {int(round(weekly_calories,0))} calories'
 
         return summary_string
+    
     else:
         return 'Unrecognized activity'
 
 
 def update_authorization(url, client_info):
-    #spinner = yaspin()
-
-    #http_proxy = file_reader.jsonLoader('proxy') #only if needed
-    #oauth_url = file_reader.jsonLoader('strava_url')['oauth']
     client_info = file_reader.jsonLoader('strava_client')
     access_key = file_reader.jsonLoader('strava_token')
-    
     current_time = time.time()
 
     print('Checking Strava access token... ', end='')
@@ -103,7 +93,6 @@ def update_authorization(url, client_info):
 
     else:
         print('access token expired.  Fetching new token... ', end='')
-        #res = strava_api.strava_oauth(oauth_url, client_info, access_key)
         res = strava_api.strava_oauth(url, client_info, access_key)
         file_reader.jsonWriter('strava_token', res)
         print('new token acquired')
@@ -134,7 +123,6 @@ def update_strength(df_temp_strength, athlete_data, activities_detail_url, acces
 
 
 def update_ride_distance(df_temp, athlete_data, activities_detail_url, access_token):
-    # if 'Ride' in activity_types_this_week:
     ride_update_json = file_reader.jsonLoader('strava_distance')
     ride_update = pandas.json_normalize(ride_update_json)
     updated = df_temp.merge(ride_update, how='left', on=['id'], suffixes=('', '_new'))
@@ -146,7 +134,6 @@ def update_ride_distance(df_temp, athlete_data, activities_detail_url, access_to
     ridedf['activity_url'] = activities_detail_url + ridedf['id'].astype(str)
     ride_detail_json = update_distances.get_ride_details(ridedf, activities_detail_url, access_token)
 
-    ## SEEMS TO BE ONLY UPDATING ONE RIDE
     if len(ride_detail_json) > 0:
         print(f'Calculating distances for {len(ride_detail_json)} rides.')
         ridedf_updated = update_distances.calc_ride_distance(ride_detail_json, ridedf, athlete_data)
@@ -173,7 +160,6 @@ def get_activity_details(detail_df, activity_detail_url, access_token, file_path
             pass
         else:
             print(f'Details for activity {activity_id} not found.  Calling activities API... ', end='')
-            #my_dataset = requests.get(detail_df.iloc[i]['activity_detail_url'], params=activity_detail_par, headers=activity_detail_header).json()
             my_dataset = strava_api.get_activity_details(detail_df.iloc[i]['activity_detail_url'], access_token)
             file_reader.jsonWriter('activity_detail', my_dataset)
             print(f'done')
@@ -209,8 +195,6 @@ def main():
 
     print('Starting new run at ', datetime.datetime.now())
 
-    #strava_authorization.update_authorization() #Validate and update Strava credentials
-
     #http_proxy = file_reader.jsonLoader('proxy') #only needed behind firewall
     url_list = file_reader.jsonLoader('strava_url')
     file_list = file_reader.jsonLoader('file_list')
@@ -221,10 +205,9 @@ def main():
     update_authorization(url_list['oauth'], client_info)
 
     key_info = file_reader.jsonLoader('strava_token')
-    #access_token = file_reader.jsonLoader('strava_token')['access_token']
     access_token = key_info['access_token']
-    
     athlete_data = strava_api.get_logged_in_athlete(url_list['athlete'], access_token)
+    
     file_reader.jsonWriter('athlete_data', athlete_data)
   
     athlete_data_previous = file_reader.jsonLoader('athlete_ftp_history')
@@ -249,7 +232,7 @@ def main():
         file_reader.jsonWriter('athlete_ftp_history', athlete_data_previous)
 
     athlete_ftp_change_pct = ((athlete_ftp - athlete_data_previous[0]['ftp']) / athlete_data_previous[0]['ftp']) * 100
-    #print(f'ftp change since Jan 1 is {athlete_ftp_change_pct:.0f}%')
+    
     if athlete_ftp_change_pct == 0:
         ftp_chg_str = ''
     elif athlete_ftp_change_pct > 0:
@@ -258,7 +241,7 @@ def main():
         ftp_chg_str = ' (r{-' + str(int(round(athlete_ftp_change_pct,0))) + '%}g this year)'
 
     athlete_wkg_change_pct = ((athlete_wkg - athlete_data_previous[0]['wkg']) / athlete_data_previous[0]['wkg']) * 100
-    #print(f'wkg change since Jan 1 is {athlete_ftp_change_pct:.0f}%')
+   
     if athlete_wkg_change_pct == 0:
         wkg_chg_str = ''
     elif athlete_wkg_change_pct > 0:
@@ -273,19 +256,15 @@ def main():
     shack_post = ''.join([shack_post, f', for the week of {week_start_str} through {week_end_str}:\n\n'])
     shack_post = ''.join([shack_post, f'Currently, my FTP is {athlete_ftp}{ftp_chg_str} and my weight is {athlete_weight_lb}, giving me a W/kg of {athlete_wkg}{wkg_chg_str}.\n\n'])
 
-    #df = call_activity_api(activities_url, access_token, first_day_of_year.timestamp()) # Call activities API and pull list of activities
     activity_dataset = strava_api.get_logged_in_athlete_activities(url_list['activities'], access_token, first_day_of_year.timestamp())
     file_reader.jsonWriter('activity_list', activity_dataset)
     df = pandas.json_normalize(activity_dataset)
-    #df = pandas.json_normalize(strava_api.get_logged_in_athlete_activities(url_list['activities'], access_token, first_day_of_year.timestamp()))
     print('Number of activities returned: ' + str(len(df)))
 
     # Download and store a copy of each activity detail file, to avoid constant calls.
     print('Checking activity details...')
     get_activity_details(df, url_list['activity_detail'], key_info['access_token'], file_list['activity_detail'])
 
-    # Convert start_date to local timezone
-    # Strava provides this in start_date_local, but I wanted to learn how to do it
     print('Adjusting time from GMT to local... ', end='\r')
     df['localtimeepoch'] = ((pandas.to_datetime(df['start_date'], format='%Y-%m-%dT%H:%M:%SZ', errors='ignore') - pandas.Timestamp("1970-01-01")) // pandas.Timedelta('1s')) + df['utc_offset']
     df['localtimets'] = pandas.to_datetime(df['localtimeepoch'], unit='s')
@@ -302,11 +281,9 @@ def main():
 
     # get the data here 
     activity_count_this_year = len(pandas.unique(df['localtimedt']))
-    #dftw = df[(pandas.to_datetime(df.localtimedt).dt.date >= last_week_date)] # This week's activities
     dftw = df[(pandas.to_datetime(df.localtimedt).dt.date >= first_day_of_week.date())] # This week's activities
     activity_count_this_week = len(pandas.unique(dftw['localtimedt']))
     activity_types_this_week = pandas.unique(dftw['type'])
-    #print(f'Activity list variable is type: {type(activity_types_this_week)}')
     activity_types_this_week = numpy.sort(activity_types_this_week, axis=0)
 
     if 'Ride' in activity_types_this_week:
@@ -364,15 +341,13 @@ def main():
     for activity in activity_types_this_week:
         minutes = math.trunc((dfsum[activity]/60) % 60)
         hours = math.trunc((dfsum[activity]/3600) % 60)
-        #print(activity + ' %d:%02d' % (hours, minutes))
-        #print(format_weekly_activities(activity, dftw, hours, minutes))
         shack_post = ''.join([shack_post, format_weekly_activities(activity, dftw, hours, minutes)])
+    
     print('Calculating weekly totals by activity... done')
 
     activity_seconds = 0
-    #for activity in pandas.unique(dftw['Activity']):
+    
     for activity in activity_types_this_week:
-        #print(f'{activity} total: {dfsum[activity]}')
         activity_seconds += dfsum[activity]
 
     activity_minutes = math.trunc(((activity_seconds) / 60) % 60)
@@ -384,12 +359,10 @@ def main():
         activity_detail = file_reader.jsonLoader('activity_detail', dftw.iloc[i]['id'])
         weekly_calories += activity_detail['calories']
 
-    # print('Total:','%d:%02d' % (activity_hours, activity_minutes))
     weekly_activity_time = '%d:%02d' % (activity_hours, activity_minutes)
+    
     shack_post_buffer = f'\nTotal: {weekly_activity_time} active time. {int(round(weekly_calories))} calories.'
-    #shack_post_buffer = '\nTotal: ' + '%d:%02d' % (activity_hours, activity_minutes) + ' active time. ' + str(int(round(weekly_calories,0))) + ' calories.'
     shack_post = ''.join([shack_post, shack_post_buffer])
-
     shack_post = ''.join([shack_post,  strava_summary.athlete_summary(url_list['athlete_summary'], access_token)])
     shack_post = ''.join([shack_post, '\n\nPost generated with a Python script pulling from the Strava API\n\n'])
     shack_post = ''.join([shack_post,  str(file_reader.textLoader('dev_notes'))])
