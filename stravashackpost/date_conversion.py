@@ -18,7 +18,6 @@ def get_time_info(today_date):
 
     d = {}
     d['current_timestamp'] = today_date.timestamp()
-    #d['first_day_of_week'] = first_day_of_week.timestamp()
     d['first_day_of_week'] = datetime.datetime.combine(first_day_of_week, datetime.datetime.min.time()).timestamp()
     d['last_day_of_week'] = datetime.datetime.combine(last_day_of_week, datetime.datetime.min.time()).timestamp()
     d['first_day_of_month'] = datetime.datetime.combine(first_day_of_month, datetime.datetime.min.time()).timestamp()

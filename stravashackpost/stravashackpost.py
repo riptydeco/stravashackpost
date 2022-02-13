@@ -21,6 +21,9 @@ import numpy
 import date_conversion
 import update_distances
 import strava_api
+import colorama
+from colorama import init
+init(autoreset=True) # so you don't have to do {colorama.Fore.RESET} every time
 
 pandas.options.mode.chained_assignment = None # default = 'warn'
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -74,6 +77,11 @@ def format_weekly_activities(activity, dftw, hours, minutes):
             weekly_calories += activity_detail['calories']
         
         summary_string = f'\n Strength: I lifted {strength_count} times.  In {strength_time_string} total I lifted {strength_weight:,} lbs.  I burned {int(round(weekly_calories,0))} calories'
+        
+        # Alternate method which avoids variable declaration, but is harder to read
+        # summary_string = '\n Strength: I lifted {strength} times. '.format(strength=dftw[dftw['Activity']=='WeightTraining']['distance'].count())
+        # summary_string += 'In {str_time} total I lifted {pounds:,} lbs. '.format(str_time='%d:%02d' % (hours, minutes), pounds=round(dftw[dftw['Activity']=='WeightTraining']['distance'].sum()))
+        # summary_string += 'I burned {calories} calories.'.format(calories=int(round(weekly_calories,0)))
 
         return summary_string
     
@@ -89,7 +97,7 @@ def update_authorization(url, client_info):
     print('Checking Strava access token... ', end='')
 
     if access_key['expires_at'] > current_time:
-        print('current token is still valid')
+        print(f'{colorama.Fore.GREEN}current token is still valid')
 
     else:
         print('access token expired.  Fetching new token... ', end='')
@@ -159,7 +167,7 @@ def get_activity_details(detail_df, activity_detail_url, access_token, file_path
         if os.path.exists(path):
             pass
         else:
-            print(f'Details for activity {activity_id} not found.  Calling activities API... ', end='')
+            print(f'Details for activity {colorama.Fore.LIGHTRED_EX}{activity_id}{colorama.Fore.RESET} not found.  Calling activities API... ', end='')
             my_dataset = strava_api.get_activity_details(detail_df.iloc[i]['activity_detail_url'], access_token)
             file_reader.jsonWriter('activity_detail', my_dataset)
             print(f'done')
@@ -171,15 +179,15 @@ def clear():
 def main():
     clear()
     # Variables in use
-    today = datetime.datetime.today()
+    #today = datetime.datetime.today()
     date_list = date_conversion.get_time_info(datetime.datetime.today())
-    current_date = datetime.datetime.fromtimestamp(date_list['current_timestamp'])
+    #current_date = datetime.datetime.fromtimestamp(date_list['current_timestamp'])
     first_day_of_week = datetime.datetime.fromtimestamp(date_list['first_day_of_week'])
     last_day_of_week = datetime.datetime.fromtimestamp(date_list['last_day_of_week'])
-    first_day_of_month = datetime.datetime.fromtimestamp(date_list['first_day_of_month'])
-    last_day_of_month = datetime.datetime.fromtimestamp(date_list['last_day_of_month'])
+    #first_day_of_month = datetime.datetime.fromtimestamp(date_list['first_day_of_month'])
+    #last_day_of_month = datetime.datetime.fromtimestamp(date_list['last_day_of_month'])
     first_day_of_year = datetime.datetime.fromtimestamp(date_list['first_day_of_year'])
-    last_day_of_year = datetime.datetime.fromtimestamp(date_list['last_day_of_year'])
+    #last_day_of_year = datetime.datetime.fromtimestamp(date_list['last_day_of_year'])
 
     # altitude_f = 6000
     # altitude_m = altitude_f / 3.281
@@ -193,7 +201,8 @@ def main():
     shack_post += 's[Witness the Fitness]s\n\n'
     shack_post += 'It\'s Sunday, so let\'s talk about making wheeled contraptions go faster, and other fitness things.\n\n'
 
-    print('Starting new run at ', datetime.datetime.now())
+    #print('Starting new run at', datetime.datetime.now())
+    print(f'Starting new run at {colorama.Fore.LIGHTYELLOW_EX}{datetime.datetime.now()}')
 
     #http_proxy = file_reader.jsonLoader('proxy') #only needed behind firewall
     url_list = file_reader.jsonLoader('strava_url')
@@ -259,7 +268,8 @@ def main():
     activity_dataset = strava_api.get_logged_in_athlete_activities(url_list['activities'], access_token, first_day_of_year.timestamp())
     file_reader.jsonWriter('activity_list', activity_dataset)
     df = pandas.json_normalize(activity_dataset)
-    print('Number of activities returned: ' + str(len(df)))
+    #print('Number of activities returned: ' + str(len(df)))
+    print(f'Number of activities returned: {colorama.Fore.GREEN}{str(len(df))}')
 
     # Download and store a copy of each activity detail file, to avoid constant calls.
     print('Checking activity details...')
