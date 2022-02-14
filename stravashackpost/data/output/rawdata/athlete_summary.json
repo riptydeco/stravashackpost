@@ -2,10 +2,10 @@
      "biggest_ride_distance": 163605.0,
      "biggest_climb_elevation_gain": 1000.9000000000001,
      "recent_ride_totals": {
-          "count": 11,
+          "count": 10,
           "distance": 0.0,
-          "moving_time": 43524,
-          "elapsed_time": 43524,
+          "moving_time": 38124,
+          "elapsed_time": 38124,
           "elevation_gain": 0.0,
           "achievement_count": 0
      },

@@ -2,6 +2,7 @@
 
 #issues with package installs.  have to use: sudo python3 -m pip install yaspin
 
+from socket import send_fds
 import requests
 import urllib3
 import time
@@ -22,8 +23,8 @@ import date_conversion
 import update_distances
 import strava_api
 import colorama
-from colorama import init
-init(autoreset=True) # so you don't have to do {colorama.Fore.RESET} every time
+#from colorama import init
+colorama.init(autoreset=True) # so you don't have to do {colorama.Fore.RESET} every time
 
 pandas.options.mode.chained_assignment = None # default = 'warn'
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -100,7 +101,7 @@ def update_authorization(url, client_info):
         print(f'{colorama.Fore.GREEN}current token is still valid')
 
     else:
-        print('access token expired.  Fetching new token... ', end='')
+        print(f'{colorama.Fore.RED}access token expired{colorama.Fore.RESET}.  Fetching new token... ', end='')
         res = strava_api.strava_oauth(url, client_info, access_key)
         file_reader.jsonWriter('strava_token', res)
         print('new token acquired')
@@ -118,7 +119,7 @@ def update_strength(df_temp_strength, athlete_data, activities_detail_url, acces
     strength_detail_json = update_distances.get_strength_details(strength_df, activities_detail_url, access_token)
 
     if len(strength_detail_json) > 0:
-        print(f'Calculating weight for {len(strength_detail_json)} sessions.')
+        print(' '*4, f'Calculating weight for {len(strength_detail_json)} sessions.')
         strength_df_updated = update_distances.calc_strength_weight(strength_detail_json, strength_df, athlete_data)
 
         strength_out = strength_df_updated[['id', 'start_date_local', 'elapsed_time', 'distance']]
@@ -127,6 +128,7 @@ def update_strength(df_temp_strength, athlete_data, activities_detail_url, acces
         for index, row in list(strength_out.iterrows()):
             strength_detail.append(dict(row))
 
+        print(' '*5, end='')
         file_reader.jsonWriter('garmin_strength', strength_detail)
 
 
@@ -143,7 +145,7 @@ def update_ride_distance(df_temp, athlete_data, activities_detail_url, access_to
     ride_detail_json = update_distances.get_ride_details(ridedf, activities_detail_url, access_token)
 
     if len(ride_detail_json) > 0:
-        print(f'Calculating distances for {len(ride_detail_json)} rides.')
+        print(' '*4, f'Calculating distances for {len(ride_detail_json)} rides...')
         ridedf_updated = update_distances.calc_ride_distance(ride_detail_json, ridedf, athlete_data)
 
         ride_out = ridedf_updated[['id', 'distance', 'start_date_local']]
@@ -152,6 +154,7 @@ def update_ride_distance(df_temp, athlete_data, activities_detail_url, access_to
         for index, row in list(ride_out.iterrows()):
             ride_detail.append(dict(row))
 
+        print(' '*5, end='')
         file_reader.jsonWriter('strava_distance', ride_detail)
 
 def get_activity_details(detail_df, activity_detail_url, access_token, file_path):
@@ -159,6 +162,7 @@ def get_activity_details(detail_df, activity_detail_url, access_token, file_path
     activity_detail_bearer = 'Bearer ' + access_token
     activity_detail_header = {'Authorization': activity_detail_bearer}
     detail_df['activity_detail_url'] = activity_detail_url + detail_df['id'].astype(str)
+    detail_counter = 0
     
     for i in range(len(detail_df)):
         dirname = os.path.dirname(__file__)
@@ -167,10 +171,16 @@ def get_activity_details(detail_df, activity_detail_url, access_token, file_path
         if os.path.exists(path):
             pass
         else:
-            print(f'Details for activity {colorama.Fore.LIGHTRED_EX}{activity_id}{colorama.Fore.RESET} not found.  Calling activities API... ', end='')
+            print(f'    Details for activity {colorama.Fore.LIGHTRED_EX}{activity_id}{colorama.Fore.RESET} not found.  Calling activities API... ', end='')
             my_dataset = strava_api.get_activity_details(detail_df.iloc[i]['activity_detail_url'], access_token)
+            print(f'{colorama.Fore.GREEN}done')
+            print(f'        ', end='')
             file_reader.jsonWriter('activity_detail', my_dataset)
-            print(f'done')
+            detail_counter += 1
+
+    if detail_counter == 0:
+        print(f' Details found for all activities')
+            
         
 
 def clear():
@@ -202,7 +212,10 @@ def main():
     shack_post += 'It\'s Sunday, so let\'s talk about making wheeled contraptions go faster, and other fitness things.\n\n'
 
     #print('Starting new run at', datetime.datetime.now())
-    print(f'Starting new run at {colorama.Fore.LIGHTYELLOW_EX}{datetime.datetime.now()}')
+    print(f'{colorama.Fore.MAGENTA}Shacknews weekly fitness post generator')
+    start_time = datetime.datetime.now()
+    #print(f'Starting new run at {colorama.Fore.LIGHTYELLOW_EX}{datetime.datetime.now()}')
+    print(f'Starting new run at {colorama.Fore.LIGHTYELLOW_EX}{start_time}')
 
     #http_proxy = file_reader.jsonLoader('proxy') #only needed behind firewall
     url_list = file_reader.jsonLoader('strava_url')
@@ -269,25 +282,27 @@ def main():
     file_reader.jsonWriter('activity_list', activity_dataset)
     df = pandas.json_normalize(activity_dataset)
     #print('Number of activities returned: ' + str(len(df)))
-    print(f'Number of activities returned: {colorama.Fore.GREEN}{str(len(df))}')
+    print(f' Number of activities returned: {colorama.Fore.GREEN}{str(len(df))}')
 
     # Download and store a copy of each activity detail file, to avoid constant calls.
-    print('Checking activity details...')
+    print(f'{colorama.Fore.CYAN}Activity Detail Data')
+    print(f' Checking activity details...')
     get_activity_details(df, url_list['activity_detail'], key_info['access_token'], file_list['activity_detail'])
 
-    print('Adjusting time from GMT to local... ', end='\r')
+    print(f'{colorama.Fore.CYAN}Data Prep')
+    print(' Adjusting time from GMT to local... ', end='\r')
     df['localtimeepoch'] = ((pandas.to_datetime(df['start_date'], format='%Y-%m-%dT%H:%M:%SZ', errors='ignore') - pandas.Timestamp("1970-01-01")) // pandas.Timedelta('1s')) + df['utc_offset']
     df['localtimets'] = pandas.to_datetime(df['localtimeepoch'], unit='s')
     df['localtimedt'] = df['localtimets'].dt.strftime('%Y-%m-%d')
     df.sort_values(by='localtimets', inplace=True, ascending=True)
-    print('Adjusting time from GMT to local... done')
+    print(f' Adjusting time from GMT to local... {colorama.Fore.GREEN}done')
 
     #Convert elapsed time to HH:MM
-    print('Calculating activity durations... ', end='\r')
+    print(' Calculating activity durations... ', end='\r')
     df['elapsed_minutes'] = round(df['elapsed_time'] / 60)
     df = df.astype({'elapsed_minutes': int})
     df['elapsed_hhmm'] = pandas.to_datetime(df.elapsed_minutes, unit='m').dt.strftime('%H:%M')
-    print('Calculating activity durations... done')
+    print(f' Calculating activity durations... {colorama.Fore.GREEN}done')
 
     # get the data here 
     activity_count_this_year = len(pandas.unique(df['localtimedt']))
@@ -296,8 +311,8 @@ def main():
     activity_types_this_week = pandas.unique(dftw['type'])
     activity_types_this_week = numpy.sort(activity_types_this_week, axis=0)
 
-    if 'Ride' in activity_types_this_week:
-        update_ride_distance(df, athlete_data, url_list['activity_detail'], key_info['access_token'])
+    #if 'Ride' in activity_types_this_week:
+    update_ride_distance(df, athlete_data, url_list['activity_detail'], key_info['access_token'])
 
     # Update distance info from saved data
     ride_update_json = file_reader.jsonLoader('strava_distance')
@@ -308,8 +323,8 @@ def main():
     df = updated
 
     ### WEIGHT UPDATE HERE
-    if 'WeightTraining' in activity_types_this_week:
-        update_strength(df, athlete_data, url_list['activity_detail'], key_info['access_token'])
+    #if 'WeightTraining' in activity_types_this_week:
+    update_strength(df, athlete_data, url_list['activity_detail'], key_info['access_token'])
 
     strength_update_json = file_reader.jsonLoader('garmin_strength')
     strength_update = pandas.json_normalize(strength_update_json)
@@ -346,14 +361,14 @@ def main():
 
     dfsum = dftw.groupby(['Activity'])['elapsed_time'].sum()
 
-    print('Calculating weekly totals by activity...', end='\r')
+    print(f' Calculating weekly totals by activity...', end='\r')
     ## dont forget the "no runs this week thing"
     for activity in activity_types_this_week:
         minutes = math.trunc((dfsum[activity]/60) % 60)
         hours = math.trunc((dfsum[activity]/3600) % 60)
         shack_post = ''.join([shack_post, format_weekly_activities(activity, dftw, hours, minutes)])
     
-    print('Calculating weekly totals by activity... done')
+    print(f' Calculating weekly totals by activity... {colorama.Fore.GREEN}done')
 
     activity_seconds = 0
     
@@ -377,7 +392,13 @@ def main():
     shack_post = ''.join([shack_post, '\n\nPost generated with a Python script pulling from the Strava API\n\n'])
     shack_post = ''.join([shack_post,  str(file_reader.textLoader('dev_notes'))])
 
+    print(f'{colorama.Fore.CYAN}Overall Summary')
+    print(f' ', end='')
     file_reader.textWriter('shack_post', shack_post)
+
+    end_time = datetime.datetime.now()
+    process_duration = end_time - start_time
+    print(f'{colorama.Fore.MAGENTA}Program complete.{colorama.Fore.RESET} Process finished in {colorama.Fore.YELLOW}{process_duration}')
 
 if __name__ == '__main__':
     main()

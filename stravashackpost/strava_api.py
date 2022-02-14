@@ -8,8 +8,10 @@ import pandas
 import urllib3
 import date_conversion
 import file_reader
+import colorama
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+colorama.init(autoreset=True)
 
 def strava_oauth(url, client_info, access_key):
     payload = {'client_id': client_info['client_id'],
@@ -23,11 +25,14 @@ def strava_oauth(url, client_info, access_key):
 
 def get_logged_in_athlete(url, access_token):
     #http_proxy = file_reader.jsonLoader('proxy') #only needed behind firewall
-    print('Getting athlete data from ', url, end='')
-    print('... done')
+    #print('Getting athlete data from ', url, end='')
+    print(f'{colorama.Fore.CYAN}Athlete Data')
+    print(f' Getting athlete data from {url}', end='')
 
     athlete_header = {'Authorization': 'Bearer ' + access_token}
     my_dataset = requests.get(url, headers=athlete_header).json()
+    print(f'... {colorama.Fore.GREEN}done\n ', end='')
+    #print(f' ', end='')
     return(my_dataset)
 
 def get_logged_in_athlete_activities(url, access_token, after):
@@ -39,11 +44,14 @@ def get_logged_in_athlete_activities(url, access_token, after):
         #,'page': 1
         }
 
-    with yaspin(text=f'Getting activities data from {url}...', timer=True) as sp:
+    print(f'{colorama.Fore.CYAN}Activity Data')
+
+    with yaspin(text=f' Getting activities data from {url}...', timer=True) as sp:
         #my_dataset = requests.get(activities_url, params=param, proxies=http_proxy).json()
         my_dataset = requests.get(url, params=param).json()
         sp.stop()
-    print(f'Getting activities data from {url}... done')
+    print(f' Getting activities data from {url}... {colorama.Fore.GREEN}done')
+    print(f' ', end='')
     #activities_df = pandas.json_normalize(my_dataset)
     #activities_df.to_csv('/Users/Craig/Documents/pythonApps/athleteAPI/files/Activities.csv')
     return(my_dataset)

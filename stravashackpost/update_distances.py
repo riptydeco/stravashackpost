@@ -3,6 +3,9 @@ import requests
 import cycling_speed
 import numpy
 import file_reader
+import colorama
+
+colorama.init(autoreset=True)
 
 def get_strength_details(strength_df, activities_detail_url, access_token):
     activity_detail_par = {'include_all_efforts':  " "}
@@ -10,15 +13,15 @@ def get_strength_details(strength_df, activities_detail_url, access_token):
     activity_detail_header = {'Authorization': activity_detail_bearer}
     strength_detail_json = []
     strength_with_zero_distance_df = strength_df[strength_df['distance']==0]
-    print(f'Strength sessions needing weight calculations: {len(strength_with_zero_distance_df.index)}')
+    print(f' Strength sessions needing weight calculations: {len(strength_with_zero_distance_df.index)}')
 
     if len(strength_with_zero_distance_df) > 0:
-        print(' '*5, f'Calling Activity API to get details')
+        #print(' '*5, f'Calling Activity API to get details')
         for i in range(len(strength_with_zero_distance_df)):
-            print(' '*5, 'Calling Activity Detail API for', strength_with_zero_distance_df.iloc[i]['activity_url'])
+            print(' '*4, 'Calling Activity Detail API for', strength_with_zero_distance_df.iloc[i]['activity_url'])
             my_dataset = requests.get(strength_with_zero_distance_df.iloc[i]['activity_url'], params=activity_detail_par, headers=activity_detail_header).json()
             strength_detail_json.append(my_dataset)
-        print(' '*5, f'Data retreived for {len(strength_detail_json)} sessions')
+        print(' '*4, f'Data retreived for {len(strength_detail_json)} sessions')
     else:
         pass
     
@@ -34,16 +37,16 @@ def get_ride_details(ridedf, activities_detail_url, access_token):
 
     ride_detail_json = []
     rides_with_zero_distance_df = ridedf[ridedf['distance']==0]
-    print(f'Rides needing distance calculations: {len(rides_with_zero_distance_df.index)}')
+    print(f' Rides needing distance calculations: {len(rides_with_zero_distance_df.index)}')
 
     if len(rides_with_zero_distance_df) > 0:
-        print(' '*5, f'Calling Activity API to get details')
+        #print(' '*5, f'Calling Activity API to get details')
         for i in range(len(rides_with_zero_distance_df)):
-            print(' '*5, 'Calling Activity Detail API for', rides_with_zero_distance_df.iloc[i]['activity_url'])
+            print(' '*4, 'Calling Activity Detail API for', rides_with_zero_distance_df.iloc[i]['activity_url'])
             my_dataset = requests.get(rides_with_zero_distance_df.iloc[i]['activity_url'], params=activity_detail_par, headers=activity_detail_header).json()
             #file_reader.jsonWriter('activity_detail', my_dataset) #joing to generalize this in main.
             ride_detail_json.append(my_dataset)
-        print(' '*5, f'Data retrieved for {len(ride_detail_json)} rides')
+        print(' '*4, f'Data retrieved for {len(ride_detail_json)} rides')
     else:
         pass
 
@@ -52,14 +55,16 @@ def get_ride_details(ridedf, activities_detail_url, access_token):
 def calc_strength_weight(strength_detail_json, strength_df, athlete_data):
     strength_detail = pandas.json_normalize(strength_detail_json)
     for i in range(len(strength_detail)):
-        print(' '*5, 'Strength:', strength_detail.iloc[i]['id'], '. Current weight:', strength_detail.iloc[i]['distance'])
+        print(' '*8, 'Strength:', strength_detail.iloc[i]['id'])
+        print(' '*9, 'Current weight:', strength_detail.iloc[i]['distance'], ' lbs')
+        
         #print('id:', strength_detail.iloc[i]['id'],'custom weight:', strength_detail.iloc[i]['private_note'])
         #total_weight = strength_detail.iloc[i]['private_note'].astype(int)
         #total_weight = pandas.to_numeric(strength_detail.iloc[i]['private_note'])
         strength_detail.at[i, 'distance'] = pandas.to_numeric(strength_detail.iloc[i]['private_note'])
         #strength_detail.iloc[i]['distance'] = total_weight
         #print(total_weight)
-        print(' '*10, 'Updated weight:', strength_detail.iloc[i]['distance'])
+        print(' '*9, 'Updated weight:', int(round(strength_detail.iloc[i]['distance'],0)), 'lbs')
 
         updated_strength = strength_df.merge(strength_detail, how='left', on=['id'], suffixes=('', '_new'))
         updated_strength['distance'] = numpy.where(pandas.notnull(updated_strength['distance_new']), updated_strength['distance_new'], updated_strength['distance'])
@@ -75,14 +80,17 @@ def calc_ride_distance(ride_detail_json, ridedf, athlete_data):
     athlete_weight_kg = athlete_data['weight']
 
     ride_detail = pandas.json_normalize(ride_detail_json)
-    print('Length of ride_detail: ' + str(range(len(ride_detail))))
+    #print('Length of ride_detail: ' + str(range(len(ride_detail))))
     for i in range(len(ride_detail)):
-        print(' '*5, 'Ride:', ride_detail.iloc[i]['id'], '. Current distance: ', ride_detail.iloc[i]['distance'], '. Average Power: ', ride_detail.iloc[i]['average_watts'])
+        #print(' '*12, 'Ride:', ride_detail.iloc[i]['id'], '. Current distance: ', ride_detail.iloc[i]['distance'], '. Average Power: ', ride_detail.iloc[i]['average_watts'])
+        print(' '*8, 'Ride:', ride_detail.iloc[i]['id'])
+        print(' '*9, 'Current distance:', ride_detail.iloc[i]['distance'], 'mi. Average Power: ', ride_detail.iloc[i]['average_watts'], 'W')
+        
         watts_per_kg = ride_detail.iloc[i]['average_watts'] / athlete_weight_kg
         estimated_speed = cycling_speed.calc_speed(watts_per_kg, 0, athlete_weight_kg, bike_weight_kg, air_density)
         #estimated_distance = estimated_speed * (ride_detail.iloc[i]['elapsed_time'] / 3600) * 1609
         estimated_distance = estimated_speed * (ride_detail.iloc[i]['elapsed_time']) # if cycling_speed is returning m/s
-        print(' '*10, 'Estimated speed is: ', estimated_speed, 'mph. Estimated distance is: ', estimated_distance, 'm')
+        print(' '*9, 'Estimated speed:', round(estimated_speed,2), 'mph. Estimated distance:', int(round(estimated_distance, 0)), 'm')
         #ride_detail.iloc[i]['average_speed'] = estimated_speed
         #ride_detail.iloc[i]['distance'] = estimated_distance
         #dataframe.at[index,'column-name']='new value'

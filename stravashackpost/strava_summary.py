@@ -5,6 +5,8 @@ import pandas
 import file_reader
 import math
 import strava_api
+import colorama
+colorama.init(autoreset=True)
 
 pandas.options.mode.chained_assignment = None # default = 'warn'
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -13,7 +15,11 @@ shack_post_buffer = ''
 
 def athlete_summary(url, access_token):
     # param = {'access_token': access_token}
+    print(f'{colorama.Fore.CYAN}Athlete Stats')
+    print(f' Getting athlete summary stats... ', end='')
     my_dataset = strava_api.get_athlete_stats(url, access_token)
+    print(f'{colorama.Fore.GREEN}done')
+    print(f' ', end='')
     file_reader.jsonWriter('athlete_summary', my_dataset)
     #df = pandas.json_normalize(my_dataset)
     #df.to_csv('/Users/Craig/Documents/pythonApps/athleteAPI/files/Summary.csv')
