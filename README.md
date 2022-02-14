@@ -1,5 +1,6 @@
 # stravashackpost
- Shacknews fitness post generator from Strava data
+
+## Shacknews fitness post generator from Strava data
 
 This is a learning project, and thus does not use Strava's pre-built Swagger package.  Other repos make use of that.
 
@@ -24,7 +25,12 @@ Both of these identifiers can be found on your app page at https://www.strava.co
 
 # Process Overview
 
-# Authentication
+## Authentication
 The process will check the stored API credentials.  If the credential authentication timestamp is in the past, it will call Strava's Oauth API to get a new key, otherwise the routine will exit. If a new key is acquired, the credential file will be overwritten with the new key.  Note: There is no harm in calling the authentication API if current credentials are still valid.  The API will return the same key and expiration time you currently have stored.  
 
+## Data Prep
+The process will load stored information from files, such as the Strava API URLs list, file locations list, client information, and the current access token.  The stored access token is loaded after the Authentication step above, to ensure the credentials retrieved are current.  In addition, basic information such as the current date, and resulting dates for start and end dates of the current week, month, and year are derived.
+
+## Athelete Data
+The process will call the Athlete API to get athlete information such as name, age, location, weight, and FTP.  A rider's power-to-weight ratio, measured in watts/kilogram, will be calculated and checked against the most recently stored data.  If a change in FTP is detected, the new information is added to the FTP history file, and the year-to-date change in both FTP and W/kg is calculated and included in the output.
 
