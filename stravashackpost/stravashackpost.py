@@ -95,16 +95,17 @@ def update_authorization(url, client_info):
     access_key = file_reader.jsonLoader('strava_token')
     current_time = time.time()
 
-    print('Checking Strava access token... ', end='')
+    print(' Checking Strava access token... ', end='')
 
     if access_key['expires_at'] > current_time:
         print(f'{colorama.Fore.GREEN}current token is still valid')
 
     else:
-        print(f'{colorama.Fore.RED}access token expired{colorama.Fore.RESET}.  Fetching new token... ', end='')
+        print(f'{colorama.Fore.RED}access token expired')
+        print(f' Fetching new token...')
         res = strava_api.strava_oauth(url, client_info, access_key)
         file_reader.jsonWriter('strava_token', res)
-        print('new token acquired')
+        print(f'{colorama.Fore.GREEN}new token acquired')
 
 def update_strength(df_temp_strength, athlete_data, activities_detail_url, access_token):
     strength_update_json = file_reader.jsonLoader('garmin_strength')
@@ -224,6 +225,7 @@ def main():
     activities_detail_url = file_reader.jsonLoader('strava_url')['activity_detail']
     client_info = file_reader.jsonLoader('strava_client')
 
+    print(f'{colorama.Fore.CYAN}Authentication')
     update_authorization(url_list['oauth'], client_info)
 
     key_info = file_reader.jsonLoader('strava_token')
