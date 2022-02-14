@@ -22,5 +22,9 @@ You also will need to create /data/input/personal/client_info.json, with the fol
 
 Both of these identifiers can be found on your app page at https://www.strava.com/settings/api
 
+# Process Overview
+
+# Authentication
+The process will check the stored API credentials.  If the credential authentication timestamp is in the past, it will call Strava's Oauth API to get a new key, otherwise the routine will exit. If a new key is acquired, the credential file will be overwritten with the new key.  Note: There is no harm in calling the authentication API if current credentials are still valid.  The API will return the same key and expiration time you currently have stored.  
 
 
