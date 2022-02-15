@@ -34,3 +34,20 @@ The process will load stored information from files, such as the Strava API URLs
 ## Athelete Data
 The process will call the Athlete API to get athlete information such as name, age, location, weight, and FTP.  A rider's power-to-weight ratio, measured in watts/kilogram, will be calculated and checked against the most recently stored data.  If a change in FTP is detected, the new information is added to the FTP history file, and the year-to-date change in both FTP and W/kg is calculated and included in the output.
 
+## Activity List
+The Activities API is called, and all activities for the current year are retrieved by passing an "after" timestamp of midnight on January 1st.
+
+## Activity Details
+For each Activity ID in the year-to-date list, a check is executed to see if the activity details have previously been retrieved and stored to file.  For any that have not, most commonly with new activities since the previous execution, the activity details are retrieved.  For each required Activity, the Activity Detail API is called, and that activity's details are written to an individual, with the Activity ID in the filename.
+
+## Activity Calculations
+Using the Activity List data, a number of calculations and data operations are performed
+- Converting activity start times from GMT to Local.  **Note**: Strava provides local start times for most activities, but this step is done just in case
+- Determine the counts of activity, by type, for this week and this year
+- Determine the unique activity types for this week.  This will be used to drive later conditional processing functions   
+
+## Updating Ride Distance and Strength Weight Data
+Some training apps such as TrainerRoad do not measure or calculate cycling speed or distance.  And some training apps such as Garmin do not make weightlifting data available via public API.  These calculations are determined by:
+
+#### Cycling Distance
+
