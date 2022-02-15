@@ -53,3 +53,7 @@ Some training apps such as TrainerRoad do not measure or calculate cycling speed
 Cycling distance can be estimated using the rider's activity duration, average power, w/kg, and environmental factors such as surface gradient, rolling resistance, coefficient of drag, altitude, and other measures.  For the purpose of this app, only the rider's specific power, weight, bike weight, and altitude are utilized.  A flat road surface is assumed, with no wind.  Average values for rolling resistance and drag are used, based on the values for a typical road bike with the athlete riding on the hoods.
 
 For each cycling activity which has no distance record, or shows a distance of 0, the `cycling_speed.py` module is called to estimate average cycling speed based on the factors above, in meters/second.  The cycling speed and activity duration are used to estimate total distance in meters.
+
+#### Weight Lifting
+
+I have not yet identified a solution for pulling weightlifting data from Garmin Connect.  API access is for enterprise developers only.  Downloaded gpx and tcx files do not include weight data for strength excercises.  I have attempted to use `BeautifulSoup4` to scrape data from the activity page on connect.garmin.com, but as of yet have not been successful.  As a workaround, I put the total weight calculated by Garmin into the Private Notes section of the associated activity on Strava.  This program pulls the value from Private Notes for any activity where `type=='Strength'`
