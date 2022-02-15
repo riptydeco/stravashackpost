@@ -61,3 +61,17 @@ A file is created with the estimated distance for all rides for which it was cal
 I have not yet identified a solution for pulling weightlifting data from Garmin Connect.  API access is for enterprise developers only.  Downloaded gpx and tcx files do not include weight data for strength excercises.  I have attempted to use `BeautifulSoup4` to scrape data from the activity page on connect.garmin.com, but as of yet have not been successful.  As a workaround, I put the total weight calculated by Garmin into the Private Notes section of the associated activity on Strava.  This program pulls the value from Private Notes for any activity where `type=='Strength'`
 
 A file is created with the weight for all strength sessions for which the data has been retrieved.  At the start of each run, this file is loaded and merged into the Activity List data. For the sake of simplicity, weight is put into the `Distance` entry, as Strava's API data has no Weight field.  Calculations are then done for any strength sessions that still meet the condition `Distance==0`  This prevents the calculation from having to be done for every session on every program run.  If you want to re-pull weight, you can delete that session's entry in the saved file, or set the weight to 0.
+
+## Activity Totals
+For all activities completed in the current week, the following metrics are calculated:
+- Cycling: Activity count, total time, total distance, average power in watts, and total calories
+- Running: Activity count, total time, total distance, and total calories
+- Weightlifting: Activity count, total time, total weight lifted, and total calories
+
+Calendar-level summaries are then calcuted:
+- This week: Total time and calories across all exercises
+- This year: Activity count, total distance (cycling, running) or total weight (strength), and total time by activity type
+- All-time: Activity count, total distance, and total time for cycling and running
+
+## Output
+Throughout the process, each step writes it's calculated data into an output file.  This filename includes the timestamp of the job execution, resulting in a unique output for every process execution.  This output is formatted for the messageboard at shacknews.com/chatty, and can be cut and pasted into the New Post function there.
