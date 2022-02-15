@@ -32,7 +32,7 @@ The process will check the stored API credentials.  If the credential authentica
 The process will load stored information from files, such as the Strava API URLs list, file locations list, client information, and the current access token.  The stored access token is loaded after the Authentication step above, to ensure the credentials retrieved are current.  In addition, basic information such as the current date, and resulting dates for start and end dates of the current week, month, and year are derived.
 
 ## Athelete Data
-The process will call the Athlete API to get athlete information such as name, age, location, weight, and FTP.  A rider's power-to-weight ratio, measured in watts/kilogram, will be calculated and checked against the most recently stored data.  If a change in FTP is detected, the new information is added to the FTP history file, and the year-to-date change in both FTP and W/kg is calculated and included in the output.
+The process will call the Athlete API to get athlete information such as name, age, location, weight, and FTP.  A rider's power-to-weight ratio, measured in watts/kilogram, will be calculated and checked against the most recently stored data.  If a change in FTP is detected, the new information is added to the FTP history file, and the year-to-date change in both FTP and W/kg is calculated and included in the output.  **Note:** FTP and weight changes must be manually entered into your profile on Strava.com in order for this function to recognize the change.  I am not aware of traing applications which update this information on an athlete's behalf, but if they do then this function will see the change.
 
 ## Activity List
 The Activities API is called, and all activities for the current year are retrieved by passing an "after" timestamp of midnight on January 1st.
@@ -50,4 +50,6 @@ Using the Activity List data, a number of calculations and data operations are p
 Some training apps such as TrainerRoad do not measure or calculate cycling speed or distance.  And some training apps such as Garmin do not make weightlifting data available via public API.  These calculations are determined by:
 
 #### Cycling Distance
+Cycling distance can be estimated using the rider's activity duration, average power, w/kg, and environmental factors such as surface gradient, rolling resistance, coefficient of drag, altitude, and other measures.  For the purpose of this app, only the rider's specific power, weight, bike weight, and altitude are utilized.  A flat road surface is assumed, with no wind.  Average values for rolling resistance and drag are used, based on the values for a typical road bike with the athlete riding on the hoods.
 
+For each cycling activity which has no distance record, or shows a distance of 0, the `cycling_speed.py` module is called to estimate average cycling speed based on the factors above, in meters/second.  The cycling speed and activity duration are used to estimate total distance in meters.
