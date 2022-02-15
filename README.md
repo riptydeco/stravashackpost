@@ -54,6 +54,10 @@ Cycling distance can be estimated using the rider's activity duration, average p
 
 For each cycling activity which has no distance record, or shows a distance of 0, the `cycling_speed.py` module is called to estimate average cycling speed based on the factors above, in meters/second.  The cycling speed and activity duration are used to estimate total distance in meters.
 
+A file is created with the estimated distance for all rides for which it was calculated.  At the start of each run, this file is loaded and merged into the Activity List data.  Calculations are then done for any rides that still meet the condition `Distance==0`  This prevents the calculation from having to be done for every ride on every run.  If you want to re-estimate distance, you can delete that ride's entry in the saved file, or set the distance to 0.
+
 #### Weight Lifting
 
 I have not yet identified a solution for pulling weightlifting data from Garmin Connect.  API access is for enterprise developers only.  Downloaded gpx and tcx files do not include weight data for strength excercises.  I have attempted to use `BeautifulSoup4` to scrape data from the activity page on connect.garmin.com, but as of yet have not been successful.  As a workaround, I put the total weight calculated by Garmin into the Private Notes section of the associated activity on Strava.  This program pulls the value from Private Notes for any activity where `type=='Strength'`
+
+A file is created with the weight for all strength sessions for which the data has been retrieved.  At the start of each run, this file is loaded and merged into the Activity List data. For the sake of simplicity, weight is put into the `Distance` entry, as Strava's API data has no Weight field.  Calculations are then done for any strength sessions that still meet the condition `Distance==0`  This prevents the calculation from having to be done for every session on every program run.  If you want to re-pull weight, you can delete that session's entry in the saved file, or set the weight to 0.
