@@ -353,7 +353,11 @@ def main():
         #activityStr = ActivityType(dftw.iloc[i]["Activity"])
         exercise_day = pandas.to_datetime(dftw.iloc[i]['Date'])
         exercise_type = dftw.iloc[i]['Activity']
-        shack_post_buffer = f'On {calendar.day_name[exercise_day.weekday()]} I {ride_types[exercise_type]} for {dftw.iloc[i]["Duration"]}. Details: {dftw.iloc[i]["activity_url"]} \n'
+        shack_post_buffer = f'On {calendar.day_name[exercise_day.weekday()]} I {ride_types[exercise_type]} for {dftw.iloc[i]["Duration"]}. Details: {dftw.iloc[i]["activity_url"]} '
+        if dftw.iloc[i]['workout_type'] == 1:
+            shack_post_buffer += '<-- g{' + 'RACE}g!\n'
+        else:
+            shack_post_buffer += '\n'
         shack_post = ''.join([shack_post, shack_post_buffer])
 
 

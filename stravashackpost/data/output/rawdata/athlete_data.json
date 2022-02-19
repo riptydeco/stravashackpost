@@ -198,8 +198,8 @@
                "nickname": "",
                "resource_state": 2,
                "retired": false,
-               "distance": 81864,
-               "converted_distance": 50.9
+               "distance": 86788,
+               "converted_distance": 53.9
           },
           {
                "id": "g9370876",
@@ -208,8 +208,8 @@
                "nickname": "Clifton",
                "resource_state": 2,
                "retired": false,
-               "distance": 118930,
-               "converted_distance": 73.9
+               "distance": 121366,
+               "converted_distance": 75.4
           },
           {
                "id": "g3959322",
